@@ -1,0 +1,2314 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>کیت رابط کاربری مدیریت مالی پروژه‌ها</title>
+
+  <!-- Tailwind CSS v4 (browser build) -->
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+
+  <!-- Vazirmatn: فونت فارسی محلی -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" />
+
+  <!-- Lucide icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      --color-brand: #0080ff;
+      --color-brand-dark: #0066cc;
+      --color-brand-soft: #1a8aff;
+      --color-cta: #ff7f00;
+      --color-cta-dark: #e56d00;
+      --color-ink: #0a1628;
+      --color-ink-soft: #0f1d32;
+      --color-ink-card: #142540;
+      --color-ink-elevated: #1a2d4d;
+      --color-line: rgba(255, 255, 255, 0.08);
+      --color-line-strong: rgba(255, 255, 255, 0.16);
+      --color-fg: #ffffff;
+      --color-fg-muted: #a3b3c9;
+      --color-fg-subtle: #6b7d96;
+      --color-success: #36b37e;
+      --color-success-soft: rgba(54, 179, 126, 0.15);
+      --color-warning: #ffab00;
+      --color-warning-soft: rgba(255, 171, 0, 0.15);
+      --color-danger: #ef4444;
+      --color-danger-soft: rgba(239, 68, 68, 0.15);
+      --color-info: #6554c0;
+      --color-info-soft: rgba(101, 84, 192, 0.15);
+      --font-sans: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
+    }
+  </style>
+
+  <style>
+    * { -webkit-tap-highlight-color: transparent; }
+    body {
+      font-feature-settings: "ss01";
+      background:
+        radial-gradient(1200px 600px at 80% -10%, rgba(0, 128, 255, 0.12), transparent 60%),
+        radial-gradient(1000px 500px at 10% 10%, rgba(255, 127, 0, 0.08), transparent 60%),
+        #0a1628;
+      background-attachment: fixed;
+    }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+
+    .phone-scroll::-webkit-scrollbar { display: none; }
+    .phone-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Glass surfaces */
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .glass-strong {
+      background: rgba(255, 255, 255, 0.09);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    /* Phone frame */
+    .phone-frame {
+      width: 360px;
+      height: 740px;
+      border-radius: 44px;
+      background: #0a1628;
+      border: 9px solid #161e2e;
+      box-shadow:
+        0 30px 60px -15px rgba(0,0,0,0.7),
+        0 0 0 1px rgba(255,255,255,0.04) inset,
+        0 0 80px -20px rgba(0, 128, 255, 0.15);
+      overflow: hidden;
+      position: relative;
+    }
+    .phone-frame::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 130px; height: 22px;
+      background: #0a1628;
+      border-radius: 0 0 18px 18px;
+      z-index: 50;
+    }
+
+    /* Animations */
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes sheetUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes scaleIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.9); opacity: 0.8; }
+      80%, 100% { transform: scale(1.6); opacity: 0; }
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .animate-slide-up { animation: slideUp 0.4s ease-out both; }
+    .animate-sheet-up { animation: sheetUp 0.3s cubic-bezier(0.32, 0.72, 0, 1) both; }
+    .animate-fade-in { animation: fadeIn 0.25s ease-out both; }
+    .animate-scale-in { animation: scaleIn 0.25s ease-out both; }
+
+    .skeleton {
+      background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.14) 50%, rgba(255,255,255,0.04) 100%);
+      background-size: 200% 100%;
+      animation: shimmer 1.6s infinite;
+    }
+
+    .pulse-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 9999px;
+      border: 2px solid currentColor;
+      animation: pulse-ring 1.6s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+
+    .spin { animation: spin 0.8s linear infinite; }
+
+    /* Gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, #0080ff 0%, #ff7f00 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .tabular-nums { font-variant-numeric: tabular-nums; }
+
+    /* Hide on phone screens */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+
+    /* Hide sections initially */
+    .section-hidden { display: none; }
+
+    /* Active tab indicator */
+    .tab-active {
+      background: linear-gradient(135deg, #0080ff 0%, #0066cc 100%);
+      color: white;
+      box-shadow: 0 8px 20px -8px rgba(0, 128, 255, 0.6);
+    }
+
+    /* Bottom sheet container */
+    .bottom-sheet {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+    }
+    .bottom-sheet.open { display: block; }
+    .bottom-sheet-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      animation: fadeIn 0.25s ease-out both;
+    }
+    .bottom-sheet-panel {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: #0f1d32;
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: sheetUp 0.35s cubic-bezier(0.32, 0.72, 0, 1) both;
+      box-shadow: 0 -20px 60px -10px rgba(0,0,0,0.5);
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      pointer-events: none;
+    }
+    .toast {
+      pointer-events: auto;
+      animation: slideUp 0.3s ease-out both;
+      max-width: 360px;
+    }
+    .toast.leaving { animation: fadeIn 0.2s ease-out reverse both; }
+
+    /* Number input arrows hide */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type=number] { -moz-appearance: textfield; }
+
+    /* Progress ring stroke animation */
+    .progress-ring circle {
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    /* Donut chart segment transitions */
+    .donut-segment { transition: stroke-dasharray 0.6s ease-out; }
+
+    /* Tooltip */
+    [data-tooltip] { position: relative; }
+    [data-tooltip]:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a2d4d;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 50;
+    }
+  </style>
+</head>
+<body class="text-fg font-sans antialiased min-h-screen">
+
+<!-- ============================================================ -->
+<!-- TOP BAR -->
+<!-- ============================================================ -->
+<header class="sticky top-0 z-40 bg-ink/80 backdrop-blur-xl border-b border-line">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div class="relative w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-cta flex items-center justify-center shadow-lg shadow-brand/30">
+        <i data-lucide="wallet" class="w-5 h-5 text-white"></i>
+      </div>
+      <div>
+        <h1 class="text-sm font-bold leading-tight">کیت رابط کاربری</h1>
+        <p class="text-[11px] text-fg-muted leading-tight">مدیریت مالی پروژه‌ها</p>
+      </div>
+    </div>
+
+    <nav class="hidden md:flex items-center gap-1 text-sm">
+      <a href="#tokens" class="px-3 py-2 rounded-lg text-fg-muted hover:text-fg hover:bg-white/5 transition">توکن‌ها</a>
+      <a href="#components" class="px-3 py-2 rounded-lg text-fg-muted hover:text-fg hover:bg-white/5 transition">کامپوننت‌ها</a>
+      <a href="#screens" class="px-3 py-2 rounded-lg text-fg-muted hover:text-fg hover:bg-white/5 transition">صفحات</a>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <button class="h-9 px-3 rounded-lg glass text-sm hover:bg-white/10 transition flex items-center gap-2" onclick="scrollToSection('screens')">
+        <i data-lucide="smartphone" class="w-4 h-4"></i>
+        <span class="hidden sm:inline">پیش‌نمایش</span>
+      </button>
+      <button class="h-9 px-3 rounded-lg bg-cta hover:bg-cta-dark text-white text-sm font-medium transition flex items-center gap-2 shadow-lg shadow-cta/30" onclick="showToast('فایل HTML آماده استفاده است', 'success')">
+        <i data-lucide="download" class="w-4 h-4"></i>
+        <span class="hidden sm:inline">دریافت</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================ -->
+<!-- HERO -->
+<!-- ============================================================ -->
+<section class="relative max-w-7xl mx-auto px-4 sm:px-6 pt-14 pb-10">
+  <div class="grid lg:grid-cols-2 gap-10 items-center">
+    <div>
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs text-fg-muted mb-5">
+        <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>
+        نسخه ۱.۰ · مبتنی بر طراحی NexBank
+      </div>
+      <h2 class="text-4xl sm:text-5xl font-extrabold leading-tight mb-4">
+        کیت رابط کاربری<br>
+        <span class="gradient-text">مدیریت مالی پروژه‌ها</span>
+      </h2>
+      <p class="text-fg-muted leading-relaxed mb-6 max-w-md">
+        یک کیت کامل و آماده برای ساخت اپلیکیشن موبایل مدیریت بودجه، هزینه‌ها و درآمد پروژه‌ها. شامل تمام کامپوننت‌های لازم با تم تیره، فونت فارسی Vazirmatn و آیکن‌های Lucide.
+      </p>
+      <div class="flex flex-wrap gap-2 mb-6">
+        <span class="px-3 py-1.5 rounded-lg glass text-xs flex items-center gap-1.5"><i data-lucide="code-2" class="w-3.5 h-3.5 text-brand"></i>HTML5</span>
+        <span class="px-3 py-1.5 rounded-lg glass text-xs flex items-center gap-1.5"><i data-lucide="wind" class="w-3.5 h-3.5 text-cyan-400"></i>Tailwind v4</span>
+        <span class="px-3 py-1.5 rounded-lg glass text-xs flex items-center gap-1.5"><i data-lucide="type" class="w-3.5 h-3.5 text-cta"></i>Vazirmatn</span>
+        <span class="px-3 py-1.5 rounded-lg glass text-xs flex items-center gap-1.5"><i data-lucide="shapes" class="w-3.5 h-3.5 text-purple-400"></i>Lucide Icons</span>
+        <span class="px-3 py-1.5 rounded-lg glass text-xs flex items-center gap-1.5"><i data-lucide="code-2" class="w-3.5 h-3.5 text-emerald-400"></i>Vanilla JS</span>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <a href="#components" class="h-11 px-5 rounded-xl bg-brand hover:bg-brand-dark text-white font-medium transition flex items-center gap-2 shadow-lg shadow-brand/30">
+          <i data-lucide="layout-grid" class="w-4 h-4"></i>
+          مشاهده کامپوننت‌ها
+        </a>
+        <a href="#screens" class="h-11 px-5 rounded-xl glass-strong hover:bg-white/15 text-white font-medium transition flex items-center gap-2">
+          <i data-lucide="smartphone" class="w-4 h-4"></i>
+          صفحات آماده
+        </a>
+      </div>
+    </div>
+
+    <!-- Mini hero phone preview -->
+    <div class="hidden lg:flex justify-center">
+      <div class="phone-frame" style="transform: scale(0.85); transform-origin: top center;">
+        <div class="phone-scroll h-full overflow-y-auto">
+          <div class="pt-10 px-5 pb-24">
+            <div class="flex items-center justify-between mb-5">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-brand to-cta flex items-center justify-center text-white font-bold text-sm">م</div>
+                <div>
+                  <p class="text-[11px] text-fg-muted">صبح بخیر</p>
+                  <p class="text-sm font-bold">مریم احمدی</p>
+                </div>
+              </div>
+              <button class="w-9 h-9 rounded-xl glass flex items-center justify-center relative">
+                <i data-lucide="bell" class="w-4 h-4"></i>
+                <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-cta"></span>
+              </button>
+            </div>
+
+            <div class="rounded-2xl p-5 mb-4 bg-gradient-to-br from-brand to-brand-dark relative overflow-hidden">
+              <div class="absolute -top-8 -left-8 w-32 h-32 rounded-full bg-white/10"></div>
+              <div class="absolute -bottom-12 -right-4 w-24 h-24 rounded-full bg-cta/30"></div>
+              <p class="text-xs text-white/70 mb-1">موجودی کل پروژه‌ها</p>
+              <p class="text-3xl font-extrabold text-white tabular-nums mb-3">۸۴٬۵۰۰٬۰۰۰ <span class="text-sm font-normal opacity-80">تومان</span></p>
+              <div class="flex items-center gap-2 text-xs">
+                <span class="px-2 py-0.5 rounded-md bg-white/20 flex items-center gap-1"><i data-lucide="trending-up" class="w-3 h-3"></i> ۱۲٪</span>
+                <span class="text-white/70">نسبت به ماه قبل</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mb-4">
+              <div class="glass rounded-xl p-3">
+                <div class="w-8 h-8 rounded-lg bg-success-soft flex items-center justify-center mb-2"><i data-lucide="arrow-down-left" class="w-4 h-4 text-success"></i></div>
+                <p class="text-[10px] text-fg-muted">درآمد</p>
+                <p class="text-sm font-bold tabular-nums">۳۲٬۴۰۰٬۰۰۰</p>
+              </div>
+              <div class="glass rounded-xl p-3">
+                <div class="w-8 h-8 rounded-lg bg-danger-soft flex items-center justify-center mb-2"><i data-lucide="arrow-up-right" class="w-4 h-4 text-danger"></i></div>
+                <p class="text-[10px] text-fg-muted">هزینه</p>
+                <p class="text-sm font-bold tabular-nums">۱۸٬۲۰۰٬۰۰۰</p>
+              </div>
+            </div>
+
+            <p class="text-xs text-fg-muted mb-2">پروژه‌های فعال</p>
+            <div class="space-y-2.5">
+              <div class="glass rounded-xl p-3">
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center"><i data-lucide="briefcase" class="w-4 h-4 text-purple-400"></i></div>
+                    <p class="text-sm font-medium">اپلیکیشن فروش</p>
+                  </div>
+                  <span class="text-[10px] text-fg-muted">۷۲٪</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                  <div class="h-full rounded-full bg-gradient-to-l from-brand to-cta" style="width: 72%"></div>
+                </div>
+              </div>
+              <div class="glass rounded-xl p-3">
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-cyan-400"></i></div>
+                    <p class="text-sm font-medium">وب‌سایت شرکتی</p>
+                  </div>
+                  <span class="text-[10px] text-fg-muted">۴۵٪</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                  <div class="h-full rounded-full bg-gradient-to-l from-brand to-cta" style="width: 45%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- DESIGN TOKENS -->
+<!-- ============================================================ -->
+<section id="tokens" class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-8 h-8 rounded-lg glass flex items-center justify-center"><i data-lucide="palette" class="w-4 h-4 text-cta"></i></div>
+    <div>
+      <h3 class="text-lg font-bold">توکن‌های طراحی</h3>
+      <p class="text-xs text-fg-muted">رنگ‌ها، تایپوگرافی، شعاع‌ها و سایه‌ها</p>
+    </div>
+  </div>
+
+  <!-- Colors -->
+  <div class="glass rounded-2xl p-5 mb-5">
+    <h4 class="text-sm font-semibold mb-4 flex items-center gap-2"><i data-lucide="droplet" class="w-4 h-4 text-brand"></i> پالت رنگی</h4>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div class="rounded-xl p-3 bg-brand text-white">
+        <p class="text-[10px] opacity-80">رنگ اصلی</p>
+        <p class="text-sm font-bold">#0080FF</p>
+        <p class="text-[10px] opacity-70 mt-1">brand</p>
+      </div>
+      <div class="rounded-xl p-3 bg-cta text-white">
+        <p class="text-[10px] opacity-80">رنگ CTA</p>
+        <p class="text-sm font-bold">#FF7F00</p>
+        <p class="text-[10px] opacity-70 mt-1">cta</p>
+      </div>
+      <div class="rounded-xl p-3 bg-ink-soft border border-line text-white">
+        <p class="text-[10px] opacity-80">پس‌زمینه کارت</p>
+        <p class="text-sm font-bold">#0F1D32</p>
+        <p class="text-[10px] opacity-70 mt-1">ink-soft</p>
+      </div>
+      <div class="rounded-xl p-3 bg-success text-white">
+        <p class="text-[10px] opacity-80">موفقیت</p>
+        <p class="text-sm font-bold">#36B37E</p>
+        <p class="text-[10px] opacity-70 mt-1">success</p>
+      </div>
+      <div class="rounded-xl p-3 bg-warning text-white">
+        <p class="text-[10px] opacity-80">هشدار</p>
+        <p class="text-sm font-bold">#FFAB00</p>
+        <p class="text-[10px] opacity-70 mt-1">warning</p>
+      </div>
+      <div class="rounded-xl p-3 bg-danger text-white">
+        <p class="text-[10px] opacity-80">خطا</p>
+        <p class="text-sm font-bold">#EF4444</p>
+        <p class="text-[10px] opacity-70 mt-1">danger</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-5">
+    <!-- Typography -->
+    <div class="glass rounded-2xl p-5">
+      <h4 class="text-sm font-semibold mb-4 flex items-center gap-2"><i data-lucide="type" class="w-4 h-4 text-cta"></i> تایپوگرافی (Vazirmatn)</h4>
+      <div class="space-y-3">
+        <div class="flex items-baseline justify-between border-b border-line pb-2">
+          <span class="text-3xl font-extrabold">عنوان اصلی</span>
+          <span class="text-[10px] text-fg-muted">3xl / extrabold</span>
+        </div>
+        <div class="flex items-baseline justify-between border-b border-line pb-2">
+          <span class="text-xl font-bold">عنوان بخش</span>
+          <span class="text-[10px] text-fg-muted">xl / bold</span>
+        </div>
+        <div class="flex items-baseline justify-between border-b border-line pb-2">
+          <span class="text-base font-medium">متن معمولی</span>
+          <span class="text-[10px] text-fg-muted">base / medium</span>
+        </div>
+        <div class="flex items-baseline justify-between border-b border-line pb-2">
+          <span class="text-sm text-fg-muted">متن کم‌رنگ</span>
+          <span class="text-[10px] text-fg-muted">sm / muted</span>
+        </div>
+        <div class="flex items-baseline justify-between">
+          <span class="text-xs text-fg-subtle">برچسب و توضیح</span>
+          <span class="text-[10px] text-fg-muted">xs / subtle</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Radius & Shadows -->
+    <div class="glass rounded-2xl p-5">
+      <h4 class="text-sm font-semibold mb-4 flex items-center gap-2"><i data-lucide="square" class="w-4 h-4 text-cta"></i> شعاع و سایه</h4>
+      <div class="grid grid-cols-4 gap-3 mb-4">
+        <div class="text-center">
+          <div class="h-14 rounded-md bg-ink-elevated border border-line mb-1"></div>
+          <span class="text-[10px] text-fg-muted">md · ۶</span>
+        </div>
+        <div class="text-center">
+          <div class="h-14 rounded-xl bg-ink-elevated border border-line mb-1"></div>
+          <span class="text-[10px] text-fg-muted">xl · ۱۲</span>
+        </div>
+        <div class="text-center">
+          <div class="h-14 rounded-2xl bg-ink-elevated border border-line mb-1"></div>
+          <span class="text-[10px] text-fg-muted">2xl · ۱۶</span>
+        </div>
+        <div class="text-center">
+          <div class="h-14 rounded-full bg-ink-elevated border border-line mb-1"></div>
+          <span class="text-[10px] text-fg-muted">full</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="rounded-xl bg-ink-soft p-4 text-center" style="box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+          <span class="text-[10px] text-fg-muted">سایه ملایم</span>
+        </div>
+        <div class="rounded-xl bg-ink-soft p-4 text-center" style="box-shadow: 0 12px 32px -4px rgba(0, 128, 255, 0.3);">
+          <span class="text-[10px] text-fg-muted">سایه برند</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Icons -->
+  <div class="glass rounded-2xl p-5 mt-5">
+    <h4 class="text-sm font-semibold mb-4 flex items-center gap-2"><i data-lucide="shapes" class="w-4 h-4 text-cta"></i> مجموعه آیکن‌ها (Lucide)</h4>
+    <div class="grid grid-cols-6 sm:grid-cols-10 lg:grid-cols-14 gap-2 text-fg-muted">
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="home" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="wallet" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="briefcase" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="chart-pie" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="trending-up" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="trending-down" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="arrow-up-right" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="arrow-down-left" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="bell" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="settings" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="user" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="users" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="search" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="filter" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="plus" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="minus" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="check" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="calendar" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="clock" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="download" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="upload" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="eye" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="eye-off" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="lock" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="mail" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="phone" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="credit-card" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="receipt" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="tag" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="flag" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="bookmark" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="star" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="more-horizontal" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="chevron-left" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="chevron-right" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="chevron-down" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="chevron-up" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="menu" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="log-out" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="moon" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="sun" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="globe" class="w-5 h-5"></i></div>
+      <div class="aspect-square rounded-lg glass flex items-center justify-center hover:text-brand transition cursor-pointer"><i data-lucide="map-pin" class="w-5 h-5"></i></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- COMPONENTS -->
+<!-- ============================================================ -->
+<section id="components" class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-8 h-8 rounded-lg glass flex items-center justify-center"><i data-lucide="layout-grid" class="w-4 h-4 text-cta"></i></div>
+    <div>
+      <h3 class="text-lg font-bold">کامپوننت‌ها</h3>
+      <p class="text-xs text-fg-muted">بلوک‌های سازنده رابط کاربری</p>
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="glass rounded-2xl p-5 mb-5">
+    <h4 class="text-sm font-semibold mb-4 flex items-center gap-2"><i data-lucide="mouse-pointer-click" class="w-4 h-4 text-brand"></i> دکمه‌ها</h4>
+    <div class="flex flex-wrap items-center gap-3">
+      <button class="h-11 px-5 rounded-xl bg-cta hover:bg-cta-dark text-white font-medium transition flex items-center gap-2 shadow-lg shadow-cta/30">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        ثبت تراکنش
+      </button>
+      <button class="h-11 px-5 rounded-xl bg-brand hover:bg-brand-dark text-white font-medium transition flex items-center gap-2 shadow-lg shadow-brand/30">
+        <i data-lucide="save" class="w-4 h-4"></i>
+        ذخیره
+      </button>
+      <button class="h-11 px-5 rounded-xl glass-strong hover:bg-white/15 text-white font-medium transition flex items-center gap-2">
+        <i data-lucide="share-2" class="w-4 h-4"></i>
+        اشتراک‌گذاری
+      </button>
+      <button class="h-11 px-5 rounded-xl border border-line-strong hover:bg-white/5 text-white font-medium transition flex items-center gap-2">
+        <i data-lucide="download" class="w-4 h-4"></i>
+        خروجی
+      </button>
+      <button class="h-11 px-5 rounded-xl text-fg-muted hover:text-white hover:bg-white/5 font-medium transition flex items-center gap-2">
+        <i data-lucide="trash-2" class="w-4 h-4"></i>
+        حذف
+      </button>
+      <button class="h-11 w-11 rounded-xl bg-brand hover:bg-brand-dark text-white transition flex items-center justify-center shadow-lg shadow-brand/30">
+        <i data-lucide="plus" class="w-5 h-5"></i>
+      </button>
+      <button class="h-11 px-5 rounded-xl bg-cta text-white font-medium transition flex items-center gap-2 opacity-60 cursor-not-allowed">
+        <i data-lucide="lock" class="w-4 h-4"></i>
+        غیرفعال
+      </button>
+      <button class="h-11 px-5 rounded-xl bg-brand text-white font-medium transition flex items-center gap-2" disabled>
+        <i data-lucide="loader-2" class="w-4 h-4 spin"></i>
+        در حال پردازش
+      </button>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-5 mb-5">
+    <!-- Badges -->
+    <div class="glass rounded-2xl p-5">
+      <h4 class="text-sm font-semibold mb-4 flex items-center gap-2"><i data-lucide="tag" class="w-4 h-4 text-brand"></i> بج و برچسب</h4>
+      <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-2.5 py-1 rounded-md bg-success-soft text-success text-xs font-medium flex items-center gap-1"><i data-lucide="check-circle" class="w-3 h-3"></i> تکمیل شده</span>
+        <span class="px-2.5 py-1 rounded-md bg-warning-soft text-warning text-xs font-medium flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> در حال انجام</span>
+        <span class="px-2.5 py-1 rounded-md bg-danger-soft text-danger text-xs font-medium flex items-center gap-1"><i data-lucide="alert-circle" class="w-3 h-3"></i> عقب‌افتاده</span>
+        <span class="px-2.5 py-1 rounded-md bg-info-soft text-purple-300 text-xs font-medium flex items-center gap-1"><i data-lucide="pause" class="w-3 h-3"></i> متوقف شده</span>
+        <span class="px-2.5 py-1 rounded-md glass text-fg-muted text-xs font-medium">برچسب ساده</span>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <span class="px-3 py-1 rounded-full bg-brand/15 text-brand text-xs font-medium flex items-center gap-1.5 cursor-pointer hover:bg-brand/25 transition">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand"></span> طراحی
+          <i data-lucide="x" class="w-3 h-3 mr-1"></i>
+        </span>
+        <span class="px-3 py-1 rounded-full bg-cta/15 text-cta text-xs font-medium flex items-center gap-1.5 cursor-pointer hover:bg-cta/25 transition">
+          <span class="w-1.5 h-1.5 rounded-full bg-cta"></span> توسعه
+          <i data-lucide="x" class="w-3 h-3 mr-1"></i>
+        </span>
+        <span class="px-3 py-1 rounded-full glass text-fg-muted text-xs flex items-center gap-1 cursor-pointer hover:bg-white/10 transition">
+          <i data-lucide="plus" class="w-3 h-3"></i> افزودن
+        </span>
+      </div>
+    </div>
+
+    <!-- Inputs -->
+    <div class="glass rounded-2xl p-5">
+      <h4 class="text-sm font-semibold mb-4 flex items-center gap-2"><i data-lucide="text-cursor" class="w-4 h-4 text-brand"></i> فیلدهای ورودی</h4>
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs text-fg-muted mb-1.5 block">عنوان پروژه</label>
+          <div class="relative">
+            <i data-lucide="briefcase" class="w-4 h-4 text-fg-muted absolute right-3 top-1/2 -translate-y-1/2"></i>
+            <input type="text" placeholder="مثلاً: بازطراحی وب‌سایت" class="w-full h-11 pr-10 pl-4 rounded-xl bg-ink-soft border border-line focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none text-sm transition" />
+          </div>
+        </div>
+        <div>
+          <label class="text-xs text-fg-muted mb-1.5 block">مبلغ تراکنش</label>
+          <div class="relative">
+            <input type="number" placeholder="۰" class="w-full h-11 pr-4 pl-20 rounded-xl bg-ink-soft border border-line focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none text-sm tabular-nums transition" />
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-fg-muted bg-white/5 px-2 py-1 rounded-md">تومان</span>
+          </div>
+        </div>
+        <div>
+          <label class="text-xs text-fg-muted mb-1.5 block">دسته‌بندی</label>
+          <select class="w-full h-11 px-4 rounded-xl bg-ink-soft border border-line focus:border-brand outline-none text-sm transition appearance-none">
+            <option style="background: #0f1d32;">انتخاب کنید</option>
+            <option style="background: #0f1d32;">دستمزد</option>
+            <option style="background: #0f1d32;">هزینه سخت‌افزار</option>
+            <option style="background: #0f1d32;">مالکیت</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-5 mb-5">
+    <!-- Toggles & Checkboxes -->
+    <div class="glass rounded-2xl p-5">
+      <h4 class="text-sm font-semibold mb-4 flex items-center gap-2"><i data-lucide="toggle-right" class="w-4 h-4 text-brand"></i> کلیدها و انتخاب‌ها</h4>
+      <div class="space-y-3">
+        <label class="flex items-center justify-between cursor-pointer">
+          <span class="text-sm">اعلان تراکنش جدید</span>
+          <button type="button" onclick="this.querySelector('span').classList.toggle('translate-x-5'); this.classList.toggle('bg-brand')" class="relative w-11 h-6 rounded-full bg-white/15 transition-colors">
+            <span class="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-white transition-transform"></span>
+          </button>
+        </label>
+        <label class="flex items-center justify-between cursor-pointer">
+          <span class="text-sm">نمایش موجودی پنهان</span>
+          <button type="button" onclick="this.querySelector('span').classList.toggle('translate-x-5'); this.classList.toggle('bg-brand')" class="relative w-11 h-6 rounded-full bg-brand transition-colors">
+            <span class="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-white transition-transform translate-x-5"></span>
+          </button>
+        </label>
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <span class="w-5 h-5 rounded-md bg-brand flex items-center justify-center"><i data-lucide="check" class="w-3.5 h-3.5 text-white"></i></span>
+          <span class="text-sm">گزارش ماهانه ایمال شود</span>
+        </label>
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <span class="w-5 h-5 rounded-md border border-line-strong"></span>
+          <span class="text-sm">اعتبارسنجی متفاوت حروف</span>
+        </label>
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-fg-muted">نوع حساب:</span>
+          <div class="flex rounded-lg glass p-0.5">
+            <button class="px-3 py-1 rounded-md text-xs tab-active">شخصی</button>
+            <button class="px-3 py-1 rounded-md text-xs text-fg-muted">تجاری</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Avatars & User list -->
+    <div class="glass rounded-2xl p-5">
+      <h4 class="text-sm font-semibold mb-4 flex items-center gap-2"><i data-lucide="users" class="w-4 h-4 text-brand"></i> آواتار و کاربر</h4>
+      <div class="space-y-3">
+        <div class="flex items-center gap-3">
+          <div class="relative">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">م</div>
+            <span class="absolute bottom-0 left-0 w-3 h-3 rounded-full bg-success border-2 border-ink"></span>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-medium">مریم احمدی</p>
+            <p class="text-xs text-fg-muted">مدیر پروژه</p>
+          </div>
+          <button class="w-8 h-8 rounded-lg glass flex items-center justify-center"><i data-lucide="message-circle" class="w-4 h-4"></i></button>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white font-bold text-sm">ع</div>
+          <div class="flex-1">
+            <p class="text-sm font-medium">علی رضایی</p>
+            <p class="text-xs text-fg-muted">توسعه‌دهنده</p>
+          </div>
+          <button class="w-8 h-8 rounded-lg glass flex items-center justify-center"><i data-lucide="message-circle" class="w-4 h-4"></i></button>
+        </div>
+        <div class="flex -space-x-2 space-x-reverse">
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center text-white font-bold text-xs border-2 border-ink">س</div>
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-cta to-cta-dark flex items-center justify-center text-white font-bold text-xs border-2 border-ink">ز</div>
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-success to-emerald-700 flex items-center justify-center text-white font-bold text-xs border-2 border-ink">ر</div>
+          <div class="w-9 h-9 rounded-full glass flex items-center justify-center text-xs text-fg-muted border-2 border-ink">+۵</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cards -->
+  <div class="glass rounded-2xl p-5 mb-5">
+    <h4 class="text-sm font-semibold mb-4 flex items-center gap-2"><i data-lucide="credit-card" class="w-4 h-4 text-brand"></i> کارت‌ها</h4>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+      <!-- Balance card -->
+      <div class="rounded-2xl p-5 bg-gradient-to-br from-brand to-brand-dark relative overflow-hidden">
+        <div class="absolute -top-8 -left-8 w-32 h-32 rounded-full bg-white/10"></div>
+        <div class="absolute -bottom-12 -right-4 w-24 h-24 rounded-full bg-cta/30"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-xs text-white/70">موجودی کل</span>
+            <i data-lucide="wallet" class="w-5 h-5 text-white/80"></i>
+          </div>
+          <p class="text-2xl font-extrabold text-white tabular-nums mb-2">۸۴٬۵۰۰٬۰۰۰</p>
+          <p class="text-xs text-white/70 mb-4">تومان</p>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="px-2 py-0.5 rounded-md bg-white/20 flex items-center gap-1"><i data-lucide="trending-up" class="w-3 h-3"></i> ۱۲٪</span>
+            <span class="text-white/70">نسبت به ماه قبل</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stat card -->
+      <div class="rounded-2xl p-5 glass-strong">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl bg-success-soft flex items-center justify-center"><i data-lucide="arrow-down-left" class="w-5 h-5 text-success"></i></div>
+          <span class="px-2 py-0.5 rounded-md bg-success-soft text-success text-[10px] flex items-center gap-1"><i data-lucide="trending-up" class="w-3 h-3"></i> ۸٪</span>
+        </div>
+        <p class="text-xs text-fg-muted mb-1">درآمد این ماه</p>
+        <p class="text-2xl font-bold tabular-nums mb-2">۳۲٬۴۰۰٬۰۰۰</p>
+        <p class="text-[10px] text-fg-subtle">تومان · ۱۴ تراکنش</p>
+      </div>
+
+      <!-- Stat card 2 -->
+      <div class="rounded-2xl p-5 glass-strong">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl bg-danger-soft flex items-center justify-center"><i data-lucide="arrow-up-right" class="w-5 h-5 text-danger"></i></div>
+          <span class="px-2 py-0.5 rounded-md bg-danger-soft text-danger text-[10px] flex items-center gap-1"><i data-lucide="trending-down" class="w-3 h-3"></i> ۳٪</span>
+        </div>
+        <p class="text-xs text-fg-muted mb-1">هزینه این ماه</p>
+        <p class="text-2xl font-bold tabular-nums mb-2">۱۸٬۲۰۰٬۰۰۰</p>
+        <p class="text-[10px] text-fg-subtle">تومان · ۲۷ تراکنش</p>
+      </div>
+
+      <!-- Project card -->
+      <div class="rounded-2xl p-4 glass-strong">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center"><i data-lucide="briefcase" class="w-5 h-5 text-purple-400"></i></div>
+            <div>
+              <p class="text-sm font-bold">اپلیکیشن فروش</p>
+              <p class="text-[10px] text-fg-muted">مهلت: ۲۵ آذر</p>
+            </div>
+          </div>
+          <button class="w-7 h-7 rounded-lg hover:bg-white/10 flex items-center justify-center"><i data-lucide="more-horizontal" class="w-4 h-4 text-fg-muted"></i></button>
+        </div>
+        <div class="mb-2">
+          <div class="flex items-center justify-between text-xs mb-1.5">
+            <span class="text-fg-muted">بودجه مصرف‌شده</span>
+            <span class="font-medium">۷۲٪</span>
+          </div>
+          <div class="h-2 rounded-full bg-white/10 overflow-hidden">
+            <div class="h-full rounded-full bg-gradient-to-l from-brand to-cta" style="width: 72%"></div>
+          </div>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-fg-muted">۲۱٬۶۰۰٬۰۰۰ / ۳۰٬۰۰۰٬۰۰۰</span>
+          <span class="text-success font-medium">سود ۸٪</span>
+        </div>
+      </div>
+
+      <!-- Transaction card -->
+      <div class="rounded-2xl p-4 glass-strong">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-success-soft flex items-center justify-center"><i data-lucide="arrow-down-left" class="w-5 h-5 text-success"></i></div>
+          <div class="flex-1">
+            <p class="text-sm font-medium">دستمزد پروژه A</p>
+            <p class="text-[10px] text-fg-muted">امروز · ۱۴:۳۲</p>
+          </div>
+          <div class="text-left">
+            <p class="text-sm font-bold text-success tabular-nums">+۸٬۵۰۰٬۰۰۰</p>
+            <p class="text-[10px] text-fg-muted">تومان</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transaction card 2 -->
+      <div class="rounded-2xl p-4 glass-strong">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-danger-soft flex items-center justify-center"><i data-lucide="arrow-up-right" class="w-5 h-5 text-danger"></i></div>
+          <div class="flex-1">
+            <p class="text-sm font-medium">خرید سرور</p>
+            <p class="text-[10px] text-fg-muted">دیروز · ۱۰:۰۸</p>
+          </div>
+          <div class="text-left">
+            <p class="text-sm font-bold text-danger tabular-nums">-۲٬۲۰۰٬۰۰۰</p>
+            <p class="text-[10px] text-fg-muted">تومان</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="grid lg:grid-cols-3 gap-5 mb-5">
+    <!-- Donut chart -->
+    <div class="glass rounded-2xl p-5">
+      <h4 class="text-sm font-semibold mb-4 flex items-center gap-2"><i data-lucide="chart-pie" class="w-4 h-4 text-brand"></i> توزیع بودجه</h4>
+      <div class="flex items-center justify-center mb-4">
+        <div class="relative">
+          <svg width="160" height="160" viewBox="0 0 160 160" class="-rotate-90">
+            <circle cx="80" cy="80" r="60" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="16"></circle>
+            <circle cx="80" cy="80" r="60" fill="none" stroke="#0080ff" stroke-width="16" stroke-dasharray="135 377" stroke-dashoffset="0" stroke-linecap="round"></circle>
+            <circle cx="80" cy="80" r="60" fill="none" stroke="#ff7f00" stroke-width="16" stroke-dasharray="94 377" stroke-dashoffset="-135" stroke-linecap="round"></circle>
+            <circle cx="80" cy="80" r="60" fill="none" stroke="#36b37e" stroke-width="16" stroke-dasharray="75 377" stroke-dashoffset="-229" stroke-linecap="round"></circle>
+            <circle cx="80" cy="80" r="60" fill="none" stroke="#6554c0" stroke-width="16" stroke-dasharray="73 377" stroke-dashoffset="-304" stroke-linecap="round"></circle>
+          </svg>
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <p class="text-[10px] text-fg-muted">کل</p>
+            <p class="text-lg font-bold tabular-nums">۸۴.۵م</p>
+            <p class="text-[10px] text-fg-muted">تومان</p>
+          </div>
+        </div>
+      </div>
+      <div class="space-y-2">
+        <div class="flex items-center justify-between text-xs">
+          <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-brand"></span> اپلیکیشن فروش</span>
+          <span class="tabular-nums font-medium">۳۶٪</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-cta"></span> وب‌سایت شرکتی</span>
+          <span class="tabular-nums font-medium">۲۵٪</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-success"></span> کمپین مارکتینگ</span>
+          <span class="tabular-nums font-medium">۲۰٪</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm" style="background:#6554c0"></span> تحقیق و توسعه</span>
+          <span class="tabular-nums font-medium">۱۹٪</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bar chart -->
+    <div class="glass rounded-2xl p-5 lg:col-span-2">
+      <div class="flex items-center justify-between mb-4">
+        <h4 class="text-sm font-semibold flex items-center gap-2"><i data-lucide="bar-chart-3" class="w-4 h-4 text-brand"></i> روند ماهانه</h4>
+        <div class="flex rounded-lg glass p-0.5">
+          <button class="px-3 py-1 rounded-md text-xs tab-active">۶ ماه</button>
+          <button class="px-3 py-1 rounded-md text-xs text-fg-muted">سال</button>
+        </div>
+      </div>
+      <div class="flex items-end justify-between gap-2 h-44 px-2">
+        <div class="flex-1 flex flex-col items-center gap-2">
+          <div class="w-full flex flex-col gap-1 justify-end h-36">
+            <div class="w-full rounded-t-md bg-brand/40" style="height: 45%"></div>
+            <div class="w-full rounded-t-md bg-cta/70" style="height: 25%"></div>
+          </div>
+          <span class="text-[10px] text-fg-muted">اردیبهشت</span>
+        </div>
+        <div class="flex-1 flex flex-col items-center gap-2">
+          <div class="w-full flex flex-col gap-1 justify-end h-36">
+            <div class="w-full rounded-t-md bg-brand/40" style="height: 60%"></div>
+            <div class="w-full rounded-t-md bg-cta/70" style="height: 35%"></div>
+          </div>
+          <span class="text-[10px] text-fg-muted">خرداد</span>
+        </div>
+        <div class="flex-1 flex flex-col items-center gap-2">
+          <div class="w-full flex flex-col gap-1 justify-end h-36">
+            <div class="w-full rounded-t-md bg-brand/40" style="height: 50%"></div>
+            <div class="w-full rounded-t-md bg-cta/70" style="height: 40%"></div>
+          </div>
+          <span class="text-[10px] text-fg-muted">تیر</span>
+        </div>
+        <div class="flex-1 flex flex-col items-center gap-2">
+          <div class="w-full flex flex-col gap-1 justify-end h-36">
+            <div class="w-full rounded-t-md bg-brand/40" style="height: 75%"></div>
+            <div class="w-full rounded-t-md bg-cta/70" style="height: 30%"></div>
+          </div>
+          <span class="text-[10px] text-fg-muted">مرداد</span>
+        </div>
+        <div class="flex-1 flex flex-col items-center gap-2">
+          <div class="w-full flex flex-col gap-1 justify-end h-36">
+            <div class="w-full rounded-t-md bg-brand/40" style="height: 65%"></div>
+            <div class="w-full rounded-t-md bg-cta/70" style="height: 45%"></div>
+          </div>
+          <span class="text-[10px] text-fg-muted">شهریور</span>
+        </div>
+        <div class="flex-1 flex flex-col items-center gap-2">
+          <div class="w-full flex flex-col gap-1 justify-end h-36">
+            <div class="w-full rounded-t-md bg-brand" style="height: 90%"></div>
+            <div class="w-full rounded-t-md bg-cta" style="height: 38%"></div>
+          </div>
+          <span class="text-[10px] text-fg-muted">مهر</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-4 mt-4 text-xs">
+        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-brand"></span> درآمد</span>
+        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-cta"></span> هزینه</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation & Overlays -->
+  <div class="grid lg:grid-cols-2 gap-5 mb-5">
+    <!-- Navigation -->
+    <div class="glass rounded-2xl p-5">
+      <h4 class="text-sm font-semibold mb-4 flex items-center gap-2"><i data-lucide="compass" class="w-4 h-4 text-brand"></i> ناوبری پایین</h4>
+      <div class="rounded-2xl glass-strong p-2 flex items-center justify-around">
+        <button class="flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-brand">
+          <i data-lucide="home" class="w-5 h-5"></i>
+          <span class="text-[10px] font-medium">خانه</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-fg-muted hover:text-fg transition">
+          <i data-lucide="briefcase" class="w-5 h-5"></i>
+          <span class="text-[10px]">پروژه‌ها</span>
+        </button>
+        <button class="-mt-6 w-12 h-12 rounded-full bg-gradient-to-br from-cta to-cta-dark flex items-center justify-center shadow-lg shadow-cta/40 border-4 border-ink">
+          <i data-lucide="plus" class="w-5 h-5 text-white"></i>
+        </button>
+        <button class="flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-fg-muted hover:text-fg transition">
+          <i data-lucide="chart-pie" class="w-5 h-5"></i>
+          <span class="text-[10px]">گزارش</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-fg-muted hover:text-fg transition">
+          <i data-lucide="user" class="w-5 h-5"></i>
+          <span class="text-[10px]">حساب</span>
+        </button>
+      </div>
+      <p class="text-xs text-fg-muted mt-3 text-center">با دکمه شناور مرکزی برای افزودن تراکنش</p>
+    </div>
+
+    <!-- Toast / Status -->
+    <div class="glass rounded-2xl p-5">
+      <h4 class="text-sm font-semibold mb-4 flex items-center gap-2"><i data-lucide="bell-ring" class="w-4 h-4 text-brand"></i> توست و اعلان</h4>
+      <div class="space-y-2.5">
+        <button onclick="showToast('تراکنش با موفقیت ثبت شد', 'success')" class="w-full h-11 rounded-xl bg-success-soft hover:bg-success/25 text-success text-sm font-medium transition flex items-center justify-center gap-2">
+          <i data-lucide="check-circle" class="w-4 h-4"></i> نمایش توست موفقیت
+        </button>
+        <button onclick="showToast('خطا در ارتباط با سرور', 'error')" class="w-full h-11 rounded-xl bg-danger-soft hover:bg-danger/25 text-danger text-sm font-medium transition flex items-center justify-center gap-2">
+          <i data-lucide="x-circle" class="w-4 h-4"></i> نمایش توست خطا
+        </button>
+        <button onclick="showToast('به‌روزرسانی در دسترس است', 'info')" class="w-full h-11 rounded-xl bg-info-soft hover:bg-info/25 text-purple-300 text-sm font-medium transition flex items-center justify-center gap-2">
+          <i data-lucide="info" class="w-4 h-4"></i> نمایش توست اطلاع
+        </button>
+        <button onclick="openBottomSheet('demo-sheet')" class="w-full h-11 rounded-xl bg-brand hover:bg-brand-dark text-white text-sm font-medium transition flex items-center justify-center gap-2">
+          <i data-lucide="panel-top-open" class="w-4 h-4"></i> باز کردن شیت پایین
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading & Empty States -->
+  <div class="grid lg:grid-cols-2 gap-5 mb-5">
+    <!-- Skeleton -->
+    <div class="glass rounded-2xl p-5">
+      <h4 class="text-sm font-semibold mb-4 flex items-center gap-2"><i data-lucide="loader" class="w-4 h-4 text-brand"></i> اسکلت لودر</h4>
+      <div class="space-y-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full skeleton"></div>
+          <div class="flex-1 space-y-1.5">
+            <div class="h-3 rounded skeleton w-1/3"></div>
+            <div class="h-2.5 rounded skeleton w-1/2"></div>
+          </div>
+        </div>
+        <div class="h-20 rounded-xl skeleton"></div>
+        <div class="space-y-2">
+          <div class="h-3 rounded skeleton w-full"></div>
+          <div class="h-3 rounded skeleton w-5/6"></div>
+          <div class="h-3 rounded skeleton w-4/6"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="glass rounded-2xl p-5 flex flex-col items-center justify-center text-center min-h-[280px]">
+      <div class="w-16 h-16 rounded-2xl glass-strong flex items-center justify-center mb-4">
+        <i data-lucide="inbox" class="w-8 h-8 text-fg-muted"></i>
+      </div>
+      <h5 class="text-base font-bold mb-1">هنوز تراکنشی ثبت نشده</h5>
+      <p class="text-xs text-fg-muted mb-4 max-w-[240px]">برای شروع مدیریت مالی پروژه، اولین تراکنش خود را ثبت کنید.</p>
+      <button class="h-10 px-4 rounded-xl bg-cta hover:bg-cta-dark text-white text-sm font-medium transition flex items-center gap-2 shadow-lg shadow-cta/30">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        ثبت اولین تراکنش
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- MOBILE SCREENS -->
+<!-- ============================================================ -->
+<section id="screens" class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+  <div class="flex items-center gap-3 mb-2">
+    <div class="w-8 h-8 rounded-lg glass flex items-center justify-center"><i data-lucide="smartphone" class="w-4 h-4 text-cta"></i></div>
+    <div>
+      <h3 class="text-lg font-bold">صفحات اپلیکیشن</h3>
+      <p class="text-xs text-fg-muted">نمونه صفحات کامل اپلیکیشن مدیریت مالی پروژه‌ها</p>
+    </div>
+  </div>
+
+  <!-- Screen tabs -->
+  <div class="flex gap-2 overflow-x-auto pb-3 mb-6 no-scrollbar">
+    <button onclick="switchScreen('dashboard')" data-screen-btn="dashboard" class="screen-tab shrink-0 h-10 px-4 rounded-xl text-sm font-medium transition tab-active">داشبورد</button>
+    <button onclick="switchScreen('projects')" data-screen-btn="projects" class="screen-tab shrink-0 h-10 px-4 rounded-xl text-sm font-medium transition glass text-fg-muted hover:bg-white/10">پروژه‌ها</button>
+    <button onclick="switchScreen('detail')" data-screen-btn="detail" class="screen-tab shrink-0 h-10 px-4 rounded-xl text-sm font-medium transition glass text-fg-muted hover:bg-white/10">جزئیات پروژه</button>
+    <button onclick="switchScreen('transactions')" data-screen-btn="transactions" class="screen-tab shrink-0 h-10 px-4 rounded-xl text-sm font-medium transition glass text-fg-muted hover:bg-white/10">تراکنش‌ها</button>
+    <button onclick="switchScreen('reports')" data-screen-btn="reports" class="screen-tab shrink-0 h-10 px-4 rounded-xl text-sm font-medium transition glass text-fg-muted hover:bg-white/10">گزارش‌ها</button>
+    <button onclick="switchScreen('add')" data-screen-btn="add" class="screen-tab shrink-0 h-10 px-4 rounded-xl text-sm font-medium transition glass text-fg-muted hover:bg-white/10">افزودن تراکنش</button>
+    <button onclick="switchScreen('profile')" data-screen-btn="profile" class="screen-tab shrink-0 h-10 px-4 rounded-xl text-sm font-medium transition glass text-fg-muted hover:bg-white/10">پروفایل</button>
+  </div>
+
+  <!-- Screens grid -->
+  <div class="flex flex-wrap justify-center gap-8">
+
+    <!-- ============ SCREEN: DASHBOARD ============ -->
+    <div data-screen="dashboard" class="phone-frame">
+      <div class="phone-scroll h-full overflow-y-auto">
+        <!-- Status bar -->
+        <div class="pt-2 pb-1 px-5 flex items-center justify-between text-[10px] font-medium tabular-nums">
+          <span>۹:۴۱</span>
+          <div class="flex items-center gap-1">
+            <i data-lucide="signal" class="w-3 h-3"></i>
+            <i data-lucide="wifi" class="w-3 h-3"></i>
+            <i data-lucide="battery-full" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+        <!-- App bar -->
+        <div class="px-5 pt-6 pb-4 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand to-cta flex items-center justify-center text-white font-bold">م</div>
+            <div>
+              <p class="text-[11px] text-fg-muted">صبح بخیر</p>
+              <p class="text-sm font-bold">مریم احمدی</p>
+            </div>
+          </div>
+          <button class="w-10 h-10 rounded-xl glass flex items-center justify-center relative">
+            <i data-lucide="bell" class="w-4 h-4"></i>
+            <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-cta"></span>
+          </button>
+        </div>
+
+        <!-- Balance card -->
+        <div class="px-5 mb-4">
+          <div class="rounded-2xl p-5 bg-gradient-to-br from-brand to-brand-dark relative overflow-hidden">
+            <div class="absolute -top-8 -left-8 w-32 h-32 rounded-full bg-white/10"></div>
+            <div class="absolute -bottom-12 -right-4 w-24 h-24 rounded-full bg-cta/30"></div>
+            <div class="relative">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs text-white/70">موجودی کل پروژه‌ها</span>
+                <button class="text-white/80"><i data-lucide="eye" class="w-4 h-4"></i></button>
+              </div>
+              <p class="text-3xl font-extrabold text-white tabular-nums mb-1">۸۴٬۵۰۰٬۰۰۰</p>
+              <p class="text-xs text-white/70 mb-3">تومان</p>
+              <div class="flex items-center gap-2 text-xs">
+                <span class="px-2 py-0.5 rounded-md bg-white/20 flex items-center gap-1"><i data-lucide="trending-up" class="w-3 h-3"></i> ۱۲٪</span>
+                <span class="text-white/70">نسبت به ماه قبل</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick stats -->
+        <div class="px-5 grid grid-cols-2 gap-3 mb-4">
+          <div class="glass rounded-xl p-3">
+            <div class="flex items-center justify-between mb-2">
+              <div class="w-8 h-8 rounded-lg bg-success-soft flex items-center justify-center"><i data-lucide="arrow-down-left" class="w-4 h-4 text-success"></i></div>
+              <i data-lucide="trending-up" class="w-3 h-3 text-success"></i>
+            </div>
+            <p class="text-[10px] text-fg-muted">درآمد</p>
+            <p class="text-sm font-bold tabular-nums">۳۲٬۴۰۰٬۰۰۰</p>
+          </div>
+          <div class="glass rounded-xl p-3">
+            <div class="flex items-center justify-between mb-2">
+              <div class="w-8 h-8 rounded-lg bg-danger-soft flex items-center justify-center"><i data-lucide="arrow-up-right" class="w-4 h-4 text-danger"></i></div>
+              <i data-lucide="trending-down" class="w-3 h-3 text-danger"></i>
+            </div>
+            <p class="text-[10px] text-fg-muted">هزینه</p>
+            <p class="text-sm font-bold tabular-nums">۱۸٬۲۰۰٬۰۰۰</p>
+          </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="px-5 mb-4">
+          <div class="flex justify-around glass rounded-2xl p-3">
+            <button class="flex flex-col items-center gap-1.5">
+              <div class="w-10 h-10 rounded-xl bg-brand/15 flex items-center justify-center"><i data-lucide="plus" class="w-5 h-5 text-brand"></i></div>
+              <span class="text-[10px] text-fg-muted">افزودن</span>
+            </button>
+            <button class="flex flex-col items-center gap-1.5">
+              <div class="w-10 h-10 rounded-xl bg-cta/15 flex items-center justify-center"><i data-lucide="arrow-right-left" class="w-5 h-5 text-cta"></i></div>
+              <span class="text-[10px] text-fg-muted">انتقال</span>
+            </button>
+            <button class="flex flex-col items-center gap-1.5">
+              <div class="w-10 h-10 rounded-xl bg-purple-500/15 flex items-center justify-center"><i data-lucide="receipt" class="w-5 h-5 text-purple-400"></i></div>
+              <span class="text-[10px] text-fg-muted">فاکتور</span>
+            </button>
+            <button class="flex flex-col items-center gap-1.5">
+              <div class="w-10 h-10 rounded-xl bg-success/15 flex items-center justify-center"><i data-lucide="download" class="w-5 h-5 text-success"></i></div>
+              <span class="text-[10px] text-fg-muted">گزارش</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Active projects -->
+        <div class="px-5 mb-4">
+          <div class="flex items-center justify-between mb-2.5">
+            <p class="text-sm font-bold">پروژه‌های فعال</p>
+            <button class="text-[11px] text-brand">همه</button>
+          </div>
+          <div class="space-y-2.5">
+            <div class="glass rounded-xl p-3">
+              <div class="flex items-center justify-between mb-2.5">
+                <div class="flex items-center gap-2">
+                  <div class="w-9 h-9 rounded-lg bg-purple-500/20 flex items-center justify-center"><i data-lucide="briefcase" class="w-4 h-4 text-purple-400"></i></div>
+                  <div>
+                    <p class="text-sm font-medium">اپلیکیشن فروش</p>
+                    <p class="text-[10px] text-fg-muted">۲۵ آذر · ۸ تراکنش</p>
+                  </div>
+                </div>
+                <span class="text-[10px] px-2 py-0.5 rounded-md bg-warning-soft text-warning">فعال</span>
+              </div>
+              <div class="flex items-center justify-between text-[10px] mb-1">
+                <span class="text-fg-muted">۲۱٬۶۰۰٬۰۰۰ / ۳۰٬۰۰۰٬۰۰۰</span>
+                <span class="font-medium">۷۲٪</span>
+              </div>
+              <div class="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                <div class="h-full rounded-full bg-gradient-to-l from-brand to-cta" style="width: 72%"></div>
+              </div>
+            </div>
+            <div class="glass rounded-xl p-3">
+              <div class="flex items-center justify-between mb-2.5">
+                <div class="flex items-center gap-2">
+                  <div class="w-9 h-9 rounded-lg bg-cyan-500/20 flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-cyan-400"></i></div>
+                  <div>
+                    <p class="text-sm font-medium">وب‌سایت شرکتی</p>
+                    <p class="text-[10px] text-fg-muted">۱۰ دی · ۱۲ تراکنش</p>
+                  </div>
+                </div>
+                <span class="text-[10px] px-2 py-0.5 rounded-md bg-warning-soft text-warning">فعال</span>
+              </div>
+              <div class="flex items-center justify-between text-[10px] mb-1">
+                <span class="text-fg-muted">۱۳٬۵۰۰٬۰۰۰ / ۳۰٬۰۰۰٬۰۰۰</span>
+                <span class="font-medium">۴۵٪</span>
+              </div>
+              <div class="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                <div class="h-full rounded-full bg-gradient-to-l from-brand to-cta" style="width: 45%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent transactions -->
+        <div class="px-5 pb-24">
+          <div class="flex items-center justify-between mb-2.5">
+            <p class="text-sm font-bold">تراکنش‌های اخیر</p>
+            <button class="text-[11px] text-brand">همه</button>
+          </div>
+          <div class="glass rounded-xl divide-y divide-line">
+            <div class="p-3 flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-success-soft flex items-center justify-center"><i data-lucide="arrow-down-left" class="w-4 h-4 text-success"></i></div>
+              <div class="flex-1">
+                <p class="text-xs font-medium">دستمزد پروژه A</p>
+                <p class="text-[10px] text-fg-muted">امروز · ۱۴:۳۲</p>
+              </div>
+              <p class="text-xs font-bold text-success tabular-nums">+۸٬۵۰۰٬۰۰۰</p>
+            </div>
+            <div class="p-3 flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-danger-soft flex items-center justify-center"><i data-lucide="arrow-up-right" class="w-4 h-4 text-danger"></i></div>
+              <div class="flex-1">
+                <p class="text-xs font-medium">خرید سرور</p>
+                <p class="text-[10px] text-fg-muted">دیروز · ۱۰:۰۸</p>
+              </div>
+              <p class="text-xs font-bold text-danger tabular-nums">-۲٬۲۰۰٬۰۰۰</p>
+            </div>
+            <div class="p-3 flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-success-soft flex items-center justify-center"><i data-lucide="arrow-down-left" class="w-4 h-4 text-success"></i></div>
+              <div class="flex-1">
+                <p class="text-xs font-medium">پیش‌پرداخت پروژه B</p>
+                <p class="text-[10px] text-fg-muted">۲ روز پیش</p>
+              </div>
+              <p class="text-xs font-bold text-success tabular-nums">+۱۲٬۰۰۰٬۰۰۰</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom nav -->
+      <div class="absolute bottom-0 left-0 right-0 bg-ink-soft/95 backdrop-blur-xl border-t border-line p-2 flex items-center justify-around">
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-brand">
+          <i data-lucide="home" class="w-5 h-5"></i>
+          <span class="text-[9px] font-medium">خانه</span>
+        </button>
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-fg-muted">
+          <i data-lucide="briefcase" class="w-5 h-5"></i>
+          <span class="text-[9px]">پروژه‌ها</span>
+        </button>
+        <button class="-mt-6 w-12 h-12 rounded-full bg-gradient-to-br from-cta to-cta-dark flex items-center justify-center shadow-lg shadow-cta/40 border-4 border-ink" onclick="switchScreen('add')">
+          <i data-lucide="plus" class="w-5 h-5 text-white"></i>
+        </button>
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-fg-muted">
+          <i data-lucide="chart-pie" class="w-5 h-5"></i>
+          <span class="text-[9px]">گزارش</span>
+        </button>
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-fg-muted">
+          <i data-lucide="user" class="w-5 h-5"></i>
+          <span class="text-[9px]">حساب</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ SCREEN: PROJECTS LIST ============ -->
+    <div data-screen="projects" class="phone-frame section-hidden">
+      <div class="phone-scroll h-full overflow-y-auto">
+        <div class="pt-2 pb-1 px-5 flex items-center justify-between text-[10px] font-medium tabular-nums">
+          <span>۹:۴۱</span>
+          <div class="flex items-center gap-1">
+            <i data-lucide="signal" class="w-3 h-3"></i>
+            <i data-lucide="wifi" class="w-3 h-3"></i>
+            <i data-lucide="battery-full" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+        <div class="px-5 pt-6 pb-3 flex items-center justify-between">
+          <div>
+            <p class="text-xs text-fg-muted">۶ پروژه</p>
+            <h2 class="text-xl font-bold">پروژه‌های من</h2>
+          </div>
+          <button class="w-10 h-10 rounded-xl glass flex items-center justify-center"><i data-lucide="search" class="w-4 h-4"></i></button>
+        </div>
+
+        <!-- Filter chips -->
+        <div class="px-5 mb-3 flex gap-2 overflow-x-auto no-scrollbar">
+          <button class="shrink-0 px-3 py-1.5 rounded-full bg-brand text-white text-xs font-medium">همه</button>
+          <button class="shrink-0 px-3 py-1.5 rounded-full glass text-fg-muted text-xs">فعال · ۴</button>
+          <button class="shrink-0 px-3 py-1.5 rounded-full glass text-fg-muted text-xs">تکمیل‌شده · ۲</button>
+          <button class="shrink-0 px-3 py-1.5 rounded-full glass text-fg-muted text-xs">عقب‌افتاده</button>
+        </div>
+
+        <div class="px-5 space-y-3 pb-24">
+          <!-- Project 1 -->
+          <div class="glass rounded-2xl p-4">
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex items-center gap-2.5">
+                <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center"><i data-lucide="briefcase" class="w-5 h-5 text-purple-400"></i></div>
+                <div>
+                  <p class="text-sm font-bold">اپلیکیشن فروش</p>
+                  <p class="text-[10px] text-fg-muted">مهلت: ۲۵ آذر</p>
+                </div>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded-md bg-warning-soft text-warning">فعال</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 mb-3 text-center">
+              <div class="rounded-lg bg-white/5 py-2">
+                <p class="text-[9px] text-fg-muted">بودجه</p>
+                <p class="text-xs font-bold tabular-nums">۳۰م</p>
+              </div>
+              <div class="rounded-lg bg-white/5 py-2">
+                <p class="text-[9px] text-fg-muted">مصرف</p>
+                <p class="text-xs font-bold tabular-nums text-cta">۲۱.۶م</p>
+              </div>
+              <div class="rounded-lg bg-white/5 py-2">
+                <p class="text-[9px] text-fg-muted">سود</p>
+                <p class="text-xs font-bold tabular-nums text-success">۸٪</p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between text-[10px] mb-1.5">
+              <span class="text-fg-muted">پیشرفت پروژه</span>
+              <span class="font-medium">۷۲٪</span>
+            </div>
+            <div class="h-2 rounded-full bg-white/10 overflow-hidden">
+              <div class="h-full rounded-full bg-gradient-to-l from-brand to-cta" style="width: 72%"></div>
+            </div>
+          </div>
+
+          <!-- Project 2 -->
+          <div class="glass rounded-2xl p-4">
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex items-center gap-2.5">
+                <div class="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center"><i data-lucide="globe" class="w-5 h-5 text-cyan-400"></i></div>
+                <div>
+                  <p class="text-sm font-bold">وب‌سایت شرکتی</p>
+                  <p class="text-[10px] text-fg-muted">مهلت: ۱۰ دی</p>
+                </div>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded-md bg-warning-soft text-warning">فعال</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 mb-3 text-center">
+              <div class="rounded-lg bg-white/5 py-2">
+                <p class="text-[9px] text-fg-muted">بودجه</p>
+                <p class="text-xs font-bold tabular-nums">۳۰م</p>
+              </div>
+              <div class="rounded-lg bg-white/5 py-2">
+                <p class="text-[9px] text-fg-muted">مصرف</p>
+                <p class="text-xs font-bold tabular-nums text-cta">۱۳.۵م</p>
+              </div>
+              <div class="rounded-lg bg-white/5 py-2">
+                <p class="text-[9px] text-fg-muted">سود</p>
+                <p class="text-xs font-bold tabular-nums text-success">۱۲٪</p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between text-[10px] mb-1.5">
+              <span class="text-fg-muted">پیشرفت پروژه</span>
+              <span class="font-medium">۴۵٪</span>
+            </div>
+            <div class="h-2 rounded-full bg-white/10 overflow-hidden">
+              <div class="h-full rounded-full bg-gradient-to-l from-brand to-cta" style="width: 45%"></div>
+            </div>
+          </div>
+
+          <!-- Project 3 -->
+          <div class="glass rounded-2xl p-4">
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex items-center gap-2.5">
+                <div class="w-10 h-10 rounded-xl bg-pink-500/20 flex items-center justify-center"><i data-lucide="megaphone" class="w-5 h-5 text-pink-400"></i></div>
+                <div>
+                  <p class="text-sm font-bold">کمپین مارکتینگ</p>
+                  <p class="text-[10px] text-fg-muted">مهلت: ۱۵ بهمن</p>
+                </div>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded-md bg-danger-soft text-danger">عقب‌افتاده</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 mb-3 text-center">
+              <div class="rounded-lg bg-white/5 py-2">
+                <p class="text-[9px] text-fg-muted">بودجه</p>
+                <p class="text-xs font-bold tabular-nums">۱۵م</p>
+              </div>
+              <div class="rounded-lg bg-white/5 py-2">
+                <p class="text-[9px] text-fg-muted">مصرف</p>
+                <p class="text-xs font-bold tabular-nums text-cta">۱۲م</p>
+              </div>
+              <div class="rounded-lg bg-white/5 py-2">
+                <p class="text-[9px] text-fg-muted">سود</p>
+                <p class="text-xs font-bold tabular-nums text-danger">-۴٪</p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between text-[10px] mb-1.5">
+              <span class="text-fg-muted">پیشرفت پروژه</span>
+              <span class="font-medium">۸۰٪</span>
+            </div>
+            <div class="h-2 rounded-full bg-white/10 overflow-hidden">
+              <div class="h-full rounded-full bg-gradient-to-l from-brand to-cta" style="width: 80%"></div>
+            </div>
+          </div>
+
+          <!-- Project 4 -->
+          <div class="glass rounded-2xl p-4">
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex items-center gap-2.5">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i></div>
+                <div>
+                  <p class="text-sm font-bold">موبایل اپ بانک</p>
+                  <p class="text-[10px] text-fg-muted">تکمیل‌شده · ۹۸٪</p>
+                </div>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded-md bg-success-soft text-success">تکمیل</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 mb-3 text-center">
+              <div class="rounded-lg bg-white/5 py-2">
+                <p class="text-[9px] text-fg-muted">بودجه</p>
+                <p class="text-xs font-bold tabular-nums">۲۵م</p>
+              </div>
+              <div class="rounded-lg bg-white/5 py-2">
+                <p class="text-[9px] text-fg-muted">مصرف</p>
+                <p class="text-xs font-bold tabular-nums text-cta">۲۴م</p>
+              </div>
+              <div class="rounded-lg bg-white/5 py-2">
+                <p class="text-[9px] text-fg-muted">سود</p>
+                <p class="text-xs font-bold tabular-nums text-success">۱۸٪</p>
+              </div>
+            </div>
+            <div class="h-2 rounded-full bg-white/10 overflow-hidden">
+              <div class="h-full rounded-full bg-success" style="width: 100%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom nav -->
+      <div class="absolute bottom-0 left-0 right-0 bg-ink-soft/95 backdrop-blur-xl border-t border-line p-2 flex items-center justify-around">
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-fg-muted">
+          <i data-lucide="home" class="w-5 h-5"></i>
+          <span class="text-[9px]">خانه</span>
+        </button>
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-brand">
+          <i data-lucide="briefcase" class="w-5 h-5"></i>
+          <span class="text-[9px] font-medium">پروژه‌ها</span>
+        </button>
+        <button class="-mt-6 w-12 h-12 rounded-full bg-gradient-to-br from-cta to-cta-dark flex items-center justify-center shadow-lg shadow-cta/40 border-4 border-ink" onclick="switchScreen('add')">
+          <i data-lucide="plus" class="w-5 h-5 text-white"></i>
+        </button>
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-fg-muted">
+          <i data-lucide="chart-pie" class="w-5 h-5"></i>
+          <span class="text-[9px]">گزارش</span>
+        </button>
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-fg-muted">
+          <i data-lucide="user" class="w-5 h-5"></i>
+          <span class="text-[9px]">حساب</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ SCREEN: PROJECT DETAIL ============ -->
+    <div data-screen="detail" class="phone-frame section-hidden">
+      <div class="phone-scroll h-full overflow-y-auto">
+        <div class="pt-2 pb-1 px-5 flex items-center justify-between text-[10px] font-medium tabular-nums">
+          <span>۹:۴۱</span>
+          <div class="flex items-center gap-1">
+            <i data-lucide="signal" class="w-3 h-3"></i>
+            <i data-lucide="wifi" class="w-3 h-3"></i>
+            <i data-lucide="battery-full" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+        <!-- Header -->
+        <div class="px-5 pt-4 pb-3 flex items-center justify-between">
+          <button class="w-9 h-9 rounded-lg glass flex items-center justify-center"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
+          <p class="text-sm font-bold">جزئیات پروژه</p>
+          <button class="w-9 h-9 rounded-lg glass flex items-center justify-center"><i data-lucide="more-horizontal" class="w-5 h-5"></i></button>
+        </div>
+
+        <!-- Project hero -->
+        <div class="px-5 mb-4">
+          <div class="rounded-2xl p-5 bg-gradient-to-br from-purple-600 to-purple-900 relative overflow-hidden">
+            <div class="absolute -top-6 -left-6 w-24 h-24 rounded-full bg-white/10"></div>
+            <div class="relative">
+              <div class="flex items-center gap-2 mb-3">
+                <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center"><i data-lucide="briefcase" class="w-5 h-5 text-white"></i></div>
+                <div>
+                  <p class="text-sm font-bold text-white">اپلیکیشن فروش</p>
+                  <p class="text-[10px] text-white/70">شروع: ۱ مهر · مهلت: ۲۵ آذر</p>
+                </div>
+              </div>
+              <div class="flex items-end justify-between mb-3">
+                <div>
+                  <p class="text-[10px] text-white/70">موجودی پروژه</p>
+                  <p class="text-2xl font-extrabold text-white tabular-nums">۸٬۴۰۰٬۰۰۰</p>
+                </div>
+                <span class="px-2 py-1 rounded-md bg-white/20 text-[10px] text-white">۷۲٪ مصرف</span>
+              </div>
+              <div class="h-2 rounded-full bg-white/20 overflow-hidden">
+                <div class="h-full rounded-full bg-white" style="width: 72%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats row -->
+        <div class="px-5 grid grid-cols-3 gap-2 mb-4">
+          <div class="glass rounded-xl p-2.5 text-center">
+            <div class="w-7 h-7 rounded-lg bg-success-soft flex items-center justify-center mx-auto mb-1"><i data-lucide="arrow-down-left" class="w-3.5 h-3.5 text-success"></i></div>
+            <p class="text-[9px] text-fg-muted">درآمد</p>
+            <p class="text-xs font-bold tabular-nums">۱۵م</p>
+          </div>
+          <div class="glass rounded-xl p-2.5 text-center">
+            <div class="w-7 h-7 rounded-lg bg-danger-soft flex items-center justify-center mx-auto mb-1"><i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-danger"></i></div>
+            <p class="text-[9px] text-fg-muted">هزینه</p>
+            <p class="text-xs font-bold tabular-nums">۶.۶م</p>
+          </div>
+          <div class="glass rounded-xl p-2.5 text-center">
+            <div class="w-7 h-7 rounded-lg bg-info-soft flex items-center justify-center mx-auto mb-1"><i data-lucide="trending-up" class="w-3.5 h-3.5 text-purple-300"></i></div>
+            <p class="text-[9px] text-fg-muted">سود</p>
+            <p class="text-xs font-bold tabular-nums text-success">۸.۴م</p>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="px-5 mb-3">
+          <div class="flex rounded-xl glass p-1">
+            <button class="flex-1 h-9 rounded-lg tab-active text-xs font-medium">تراکنش‌ها</button>
+            <button class="flex-1 h-9 rounded-lg text-fg-muted text-xs">اعضا</button>
+            <button class="flex-1 h-9 rounded-lg text-fg-muted text-xs">جزئیات</button>
+          </div>
+        </div>
+
+        <!-- Transactions -->
+        <div class="px-5 pb-24 space-y-2">
+          <p class="text-xs text-fg-muted mb-1">امروز</p>
+          <div class="glass rounded-xl p-3 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-success-soft flex items-center justify-center"><i data-lucide="arrow-down-left" class="w-4 h-4 text-success"></i></div>
+            <div class="flex-1">
+              <p class="text-xs font-medium">پرداخت مرحله دوم</p>
+              <p class="text-[10px] text-fg-muted">مشتری · ۱۴:۳۲</p>
+            </div>
+            <p class="text-xs font-bold text-success tabular-nums">+۵٬۰۰۰٬۰۰۰</p>
+          </div>
+
+          <p class="text-xs text-fg-muted mt-3 mb-1">دیروز</p>
+          <div class="glass rounded-xl p-3 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-danger-soft flex items-center justify-center"><i data-lucide="arrow-up-right" class="w-4 h-4 text-danger"></i></div>
+            <div class="flex-1">
+              <p class="text-xs font-medium">خرید سرور</p>
+              <p class="text-[10px] text-fg-muted">هزینه زیرساخت · ۱۰:۰۸</p>
+            </div>
+            <p class="text-xs font-bold text-danger tabular-nums">-۲٬۲۰۰٬۰۰۰</p>
+          </div>
+          <div class="glass rounded-xl p-3 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-danger-soft flex items-center justify-center"><i data-lucide="arrow-up-right" class="w-4 h-4 text-danger"></i></div>
+            <div class="flex-1">
+              <p class="text-xs font-medium">دستمزد فریلنسر</p>
+              <p class="text-[10px] text-fg-muted">توسعه‌دهنده · ۱۶:۴۵</p>
+            </div>
+            <p class="text-xs font-bold text-danger tabular-nums">-۱٬۸۰۰٬۰۰۰</p>
+          </div>
+
+          <p class="text-xs text-fg-muted mt-3 mb-1">۲ روز پیش</p>
+          <div class="glass rounded-xl p-3 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-success-soft flex items-center justify-center"><i data-lucide="arrow-down-left" class="w-4 h-4 text-success"></i></div>
+            <div class="flex-1">
+              <p class="text-xs font-medium">پیش‌پرداخت</p>
+              <p class="text-[10px] text-fg-muted">مشتری · ۰۹:۱۵</p>
+            </div>
+            <p class="text-xs font-bold text-success tabular-nums">+۱۰٬۰۰۰٬۰۰۰</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAB -->
+      <button class="absolute bottom-6 left-1/2 -translate-x-1/2 h-12 px-6 rounded-full bg-gradient-to-r from-cta to-cta-dark text-white text-sm font-medium shadow-lg shadow-cta/40 flex items-center gap-2" onclick="switchScreen('add')">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        تراکنش جدید
+      </button>
+    </div>
+
+    <!-- ============ SCREEN: TRANSACTIONS ============ -->
+    <div data-screen="transactions" class="phone-frame section-hidden">
+      <div class="phone-scroll h-full overflow-y-auto">
+        <div class="pt-2 pb-1 px-5 flex items-center justify-between text-[10px] font-medium tabular-nums">
+          <span>۹:۴۱</span>
+          <div class="flex items-center gap-1">
+            <i data-lucide="signal" class="w-3 h-3"></i>
+            <i data-lucide="wifi" class="w-3 h-3"></i>
+            <i data-lucide="battery-full" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+        <div class="px-5 pt-4 pb-3 flex items-center justify-between">
+          <div>
+            <p class="text-xs text-fg-muted">۴۱ تراکنش</p>
+            <h2 class="text-xl font-bold">تراکنش‌ها</h2>
+          </div>
+          <button class="w-10 h-10 rounded-xl glass flex items-center justify-center"><i data-lucide="filter" class="w-4 h-4"></i></button>
+        </div>
+
+        <!-- Search -->
+        <div class="px-5 mb-3">
+          <div class="relative">
+            <i data-lucide="search" class="w-4 h-4 text-fg-muted absolute right-3 top-1/2 -translate-y-1/2"></i>
+            <input type="text" placeholder="جستجوی تراکنش..." class="w-full h-11 pr-10 pl-4 rounded-xl bg-ink-soft border border-line focus:border-brand outline-none text-sm" />
+          </div>
+        </div>
+
+        <!-- Filter chips -->
+        <div class="px-5 mb-3 flex gap-2 overflow-x-auto no-scrollbar">
+          <button class="shrink-0 px-3 py-1.5 rounded-full bg-brand text-white text-xs">همه</button>
+          <button class="shrink-0 px-3 py-1.5 rounded-full glass text-fg-muted text-xs">درآمد</button>
+          <button class="shrink-0 px-3 py-1.5 rounded-full glass text-fg-muted text-xs">هزینه</button>
+          <button class="shrink-0 px-3 py-1.5 rounded-full glass text-fg-muted text-xs">انتقال</button>
+        </div>
+
+        <!-- Summary -->
+        <div class="px-5 mb-3">
+          <div class="glass rounded-xl p-3 grid grid-cols-2 gap-3">
+            <div>
+              <p class="text-[10px] text-fg-muted">جمع ورودی</p>
+              <p class="text-base font-bold text-success tabular-nums">۳۲٬۴۰۰٬۰۰۰</p>
+            </div>
+            <div class="border-r border-line pr-3">
+              <p class="text-[10px] text-fg-muted">جمع خروجی</p>
+              <p class="text-base font-bold text-danger tabular-nums">۱۸٬۲۰۰٬۰۰۰</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transaction list grouped by date -->
+        <div class="px-5 pb-24 space-y-3">
+          <div>
+            <p class="text-xs text-fg-muted mb-2 px-1">امروز · ۱۴ مهر</p>
+            <div class="glass rounded-xl divide-y divide-line">
+              <div class="p-3 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-success-soft flex items-center justify-center"><i data-lucide="arrow-down-left" class="w-4 h-4 text-success"></i></div>
+                <div class="flex-1">
+                  <p class="text-xs font-medium">دستمزد پروژه A</p>
+                  <p class="text-[10px] text-fg-muted">اپلیکیشن فروش · ۱۴:۳۲</p>
+                </div>
+                <p class="text-xs font-bold text-success tabular-nums">+۸٬۵۰۰٬۰۰۰</p>
+              </div>
+              <div class="p-3 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-danger-soft flex items-center justify-center"><i data-lucide="arrow-up-right" class="w-4 h-4 text-danger"></i></div>
+                <div class="flex-1">
+                  <p class="text-xs font-medium">نوشیدنی تیم</p>
+                  <p class="text-[10px] text-fg-muted">عمومی · ۱۱:۲۰</p>
+                </div>
+                <p class="text-xs font-bold text-danger tabular-nums">-۱۸۰٬۰۰۰</p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-xs text-fg-muted mb-2 px-1">دیروز · ۱۳ مهر</p>
+            <div class="glass rounded-xl divide-y divide-line">
+              <div class="p-3 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-danger-soft flex items-center justify-center"><i data-lucide="arrow-up-right" class="w-4 h-4 text-danger"></i></div>
+                <div class="flex-1">
+                  <p class="text-xs font-medium">خرید سرور</p>
+                  <p class="text-[10px] text-fg-muted">اپلیکیشن فروش · ۱۰:۰۸</p>
+                </div>
+                <p class="text-xs font-bold text-danger tabular-nums">-۲٬۲۰۰٬۰۰۰</p>
+              </div>
+              <div class="p-3 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-info-soft flex items-center justify-center"><i data-lucide="arrow-right-left" class="w-4 h-4 text-purple-300"></i></div>
+                <div class="flex-1">
+                  <p class="text-xs font-medium">انتقال بین پروژه‌ها</p>
+                  <p class="text-[10px] text-fg-muted">A → B · ۰۹:۴۵</p>
+                </div>
+                <p class="text-xs font-bold text-fg-muted tabular-nums">۳٬۰۰۰٬۰۰۰</p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-xs text-fg-muted mb-2 px-1">۲ روز پیش</p>
+            <div class="glass rounded-xl divide-y divide-line">
+              <div class="p-3 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-success-soft flex items-center justify-center"><i data-lucide="arrow-down-left" class="w-4 h-4 text-success"></i></div>
+                <div class="flex-1">
+                  <p class="text-xs font-medium">پیش‌پرداخت پروژه B</p>
+                  <p class="text-[10px] text-fg-muted">وب‌سایت شرکتی</p>
+                </div>
+                <p class="text-xs font-bold text-success tabular-nums">+۱۲٬۰۰۰٬۰۰۰</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom nav -->
+      <div class="absolute bottom-0 left-0 right-0 bg-ink-soft/95 backdrop-blur-xl border-t border-line p-2 flex items-center justify-around">
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-fg-muted">
+          <i data-lucide="home" class="w-5 h-5"></i>
+          <span class="text-[9px]">خانه</span>
+        </button>
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-fg-muted">
+          <i data-lucide="briefcase" class="w-5 h-5"></i>
+          <span class="text-[9px]">پروژه‌ها</span>
+        </button>
+        <button class="-mt-6 w-12 h-12 rounded-full bg-gradient-to-br from-cta to-cta-dark flex items-center justify-center shadow-lg shadow-cta/40 border-4 border-ink" onclick="switchScreen('add')">
+          <i data-lucide="plus" class="w-5 h-5 text-white"></i>
+        </button>
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-brand">
+          <i data-lucide="chart-pie" class="w-5 h-5"></i>
+          <span class="text-[9px] font-medium">گزارش</span>
+        </button>
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-fg-muted">
+          <i data-lucide="user" class="w-5 h-5"></i>
+          <span class="text-[9px]">حساب</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ SCREEN: REPORTS ============ -->
+    <div data-screen="reports" class="phone-frame section-hidden">
+      <div class="phone-scroll h-full overflow-y-auto">
+        <div class="pt-2 pb-1 px-5 flex items-center justify-between text-[10px] font-medium tabular-nums">
+          <span>۹:۴۱</span>
+          <div class="flex items-center gap-1">
+            <i data-lucide="signal" class="w-3 h-3"></i>
+            <i data-lucide="wifi" class="w-3 h-3"></i>
+            <i data-lucide="battery-full" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+        <div class="px-5 pt-4 pb-3 flex items-center justify-between">
+          <div>
+            <p class="text-xs text-fg-muted">مهر ۱۴۰۴</p>
+            <h2 class="text-xl font-bold">گزارش‌ها</h2>
+          </div>
+          <button class="w-10 h-10 rounded-xl glass flex items-center justify-center"><i data-lucide="calendar" class="w-4 h-4"></i></button>
+        </div>
+
+        <!-- Period tabs -->
+        <div class="px-5 mb-3">
+          <div class="flex rounded-xl glass p-1">
+            <button class="flex-1 h-9 rounded-lg text-fg-muted text-xs">هفته</button>
+            <button class="flex-1 h-9 rounded-lg tab-active text-xs font-medium">ماه</button>
+            <button class="flex-1 h-9 rounded-lg text-fg-muted text-xs">سال</button>
+          </div>
+        </div>
+
+        <!-- Net flow chart -->
+        <div class="px-5 mb-4">
+          <div class="glass rounded-2xl p-4">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <p class="text-xs text-fg-muted">جریان خالص مالی</p>
+                <p class="text-lg font-bold tabular-nums">+۱۴٬۲۰۰٬۰۰۰</p>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded-md bg-success-soft text-success">۱۲٪ رشد</span>
+            </div>
+            <svg viewBox="0 0 320 100" class="w-full h-24">
+              <defs>
+                <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#0080ff" stop-opacity="0.4"></stop>
+                  <stop offset="100%" stop-color="#0080ff" stop-opacity="0"></stop>
+                </linearGradient>
+              </defs>
+              <path d="M 0 70 L 40 60 L 80 75 L 120 45 L 160 55 L 200 35 L 240 40 L 280 20 L 320 25 L 320 100 L 0 100 Z" fill="url(#lineGrad)"></path>
+              <path d="M 0 70 L 40 60 L 80 75 L 120 45 L 160 55 L 200 35 L 240 40 L 280 20 L 320 25" fill="none" stroke="#0080ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              <circle cx="280" cy="20" r="4" fill="#0080ff" stroke="#0a1628" stroke-width="2"></circle>
+            </svg>
+            <div class="flex justify-between text-[9px] text-fg-muted mt-1">
+              <span>۱</span><span>۵</span><span>۱۰</span><span>۱۵</span><span>۲۰</span><span>۲۵</span><span>۳۰</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Income vs Expense -->
+        <div class="px-5 mb-4 grid grid-cols-2 gap-3">
+          <div class="glass rounded-xl p-3">
+            <div class="flex items-center gap-1.5 mb-2">
+              <span class="w-2 h-2 rounded-full bg-success"></span>
+              <p class="text-[10px] text-fg-muted">درآمد</p>
+            </div>
+            <p class="text-base font-bold tabular-nums">۳۲.۴م</p>
+            <div class="flex items-end gap-0.5 h-8 mt-2">
+              <div class="flex-1 rounded-sm bg-success/40" style="height: 50%"></div>
+              <div class="flex-1 rounded-sm bg-success/60" style="height: 65%"></div>
+              <div class="flex-1 rounded-sm bg-success/50" style="height: 55%"></div>
+              <div class="flex-1 rounded-sm bg-success/80" style="height: 80%"></div>
+              <div class="flex-1 rounded-sm bg-success" style="height: 100%"></div>
+            </div>
+          </div>
+          <div class="glass rounded-xl p-3">
+            <div class="flex items-center gap-1.5 mb-2">
+              <span class="w-2 h-2 rounded-full bg-cta"></span>
+              <p class="text-[10px] text-fg-muted">هزینه</p>
+            </div>
+            <p class="text-base font-bold tabular-nums">۱۸.۲م</p>
+            <div class="flex items-end gap-0.5 h-8 mt-2">
+              <div class="flex-1 rounded-sm bg-cta/40" style="height: 30%"></div>
+              <div class="flex-1 rounded-sm bg-cta/50" style="height: 45%"></div>
+              <div class="flex-1 rounded-sm bg-cta/40" style="height: 40%"></div>
+              <div class="flex-1 rounded-sm bg-cta/70" style="height: 70%"></div>
+              <div class="flex-1 rounded-sm bg-cta" style="height: 55%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category breakdown -->
+        <div class="px-5 mb-4">
+          <div class="glass rounded-2xl p-4">
+            <p class="text-sm font-bold mb-3">هزینه بر اساس دسته</p>
+            <div class="space-y-2.5">
+              <div>
+                <div class="flex items-center justify-between text-xs mb-1">
+                  <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-brand"></span> توسعه</span>
+                  <span class="tabular-nums text-fg-muted">۸٬۲۰۰٬۰۰۰ (۴۵٪)</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                  <div class="h-full rounded-full bg-brand" style="width: 45%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between text-xs mb-1">
+                  <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-cta"></span> زیرساخت</span>
+                  <span class="tabular-nums text-fg-muted">۴٬۸۰۰٬۰۰۰ (۲۶٪)</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                  <div class="h-full rounded-full bg-cta" style="width: 26%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between text-xs mb-1">
+                  <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-success"></span> طراحی</span>
+                  <span class="tabular-nums text-fg-muted">۳٬۲۰۰٬۰۰۰ (۱۸٪)</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                  <div class="h-full rounded-full bg-success" style="width: 18%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between text-xs mb-1">
+                  <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm" style="background:#6554c0"></span> متفرقه</span>
+                  <span class="tabular-nums text-fg-muted">۲٬۰۰۰٬۰۰۰ (۱۱٪)</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                  <div class="h-full rounded-full" style="background:#6554c0; width: 11%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top projects -->
+        <div class="px-5 pb-24">
+          <div class="glass rounded-2xl p-4">
+            <p class="text-sm font-bold mb-3">سودآورترین پروژه‌ها</p>
+            <div class="space-y-2">
+              <div class="flex items-center gap-3">
+                <span class="w-5 h-5 rounded-md bg-warning/20 text-warning text-[10px] font-bold flex items-center justify-center">۱</span>
+                <div class="flex-1">
+                  <p class="text-xs font-medium">موبایل اپ بانک</p>
+                  <p class="text-[10px] text-fg-muted">۴.۵م سود</p>
+                </div>
+                <span class="text-xs text-success font-bold tabular-nums">۱۸٪</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="w-5 h-5 rounded-md bg-white/10 text-fg-muted text-[10px] font-bold flex items-center justify-center">۲</span>
+                <div class="flex-1">
+                  <p class="text-xs font-medium">وب‌سایت شرکتی</p>
+                  <p class="text-[10px] text-fg-muted">۳.۶م سود</p>
+                </div>
+                <span class="text-xs text-success font-bold tabular-nums">۱۲٪</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="w-5 h-5 rounded-md bg-white/10 text-fg-muted text-[10px] font-bold flex items-center justify-center">۳</span>
+                <div class="flex-1">
+                  <p class="text-xs font-medium">اپلیکیشن فروش</p>
+                  <p class="text-[10px] text-fg-muted">۲.۴م سود</p>
+                </div>
+                <span class="text-xs text-success font-bold tabular-nums">۸٪</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom nav -->
+      <div class="absolute bottom-0 left-0 right-0 bg-ink-soft/95 backdrop-blur-xl border-t border-line p-2 flex items-center justify-around">
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-fg-muted">
+          <i data-lucide="home" class="w-5 h-5"></i>
+          <span class="text-[9px]">خانه</span>
+        </button>
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-fg-muted">
+          <i data-lucide="briefcase" class="w-5 h-5"></i>
+          <span class="text-[9px]">پروژه‌ها</span>
+        </button>
+        <button class="-mt-6 w-12 h-12 rounded-full bg-gradient-to-br from-cta to-cta-dark flex items-center justify-center shadow-lg shadow-cta/40 border-4 border-ink" onclick="switchScreen('add')">
+          <i data-lucide="plus" class="w-5 h-5 text-white"></i>
+        </button>
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-brand">
+          <i data-lucide="chart-pie" class="w-5 h-5"></i>
+          <span class="text-[9px] font-medium">گزارش</span>
+        </button>
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-fg-muted">
+          <i data-lucide="user" class="w-5 h-5"></i>
+          <span class="text-[9px]">حساب</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ SCREEN: ADD TRANSACTION ============ -->
+    <div data-screen="add" class="phone-frame section-hidden">
+      <div class="phone-scroll h-full overflow-y-auto">
+        <div class="pt-2 pb-1 px-5 flex items-center justify-between text-[10px] font-medium tabular-nums">
+          <span>۹:۴۱</span>
+          <div class="flex items-center gap-1">
+            <i data-lucide="signal" class="w-3 h-3"></i>
+            <i data-lucide="wifi" class="w-3 h-3"></i>
+            <i data-lucide="battery-full" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+        <!-- Header -->
+        <div class="px-5 pt-4 pb-3 flex items-center justify-between">
+          <button class="w-9 h-9 rounded-lg glass flex items-center justify-center" onclick="switchScreen('dashboard')"><i data-lucide="x" class="w-5 h-5"></i></button>
+          <p class="text-sm font-bold">تراکنش جدید</p>
+          <button class="w-9 h-9 rounded-lg glass flex items-center justify-center"><i data-lucide="more-horizontal" class="w-5 h-5"></i></button>
+        </div>
+
+        <!-- Type selector -->
+        <div class="px-5 mb-4">
+          <div class="grid grid-cols-3 gap-2">
+            <button class="h-11 rounded-xl bg-success text-white text-xs font-medium flex items-center justify-center gap-1.5">
+              <i data-lucide="arrow-down-left" class="w-4 h-4"></i> درآمد
+            </button>
+            <button class="h-11 rounded-xl glass text-fg-muted text-xs font-medium flex items-center justify-center gap-1.5">
+              <i data-lucide="arrow-up-right" class="w-4 h-4"></i> هزینه
+            </button>
+            <button class="h-11 rounded-xl glass text-fg-muted text-xs font-medium flex items-center justify-center gap-1.5">
+              <i data-lucide="arrow-right-left" class="w-4 h-4"></i> انتقال
+            </button>
+          </div>
+        </div>
+
+        <!-- Amount -->
+        <div class="px-5 mb-5">
+          <p class="text-xs text-fg-muted mb-2 text-center">مبلغ را وارد کنید</p>
+          <div class="text-center">
+            <div class="inline-flex items-baseline gap-2">
+              <span class="text-4xl font-extrabold tabular-nums">۸٬۵۰۰٬۰۰۰</span>
+              <span class="text-sm text-fg-muted">تومان</span>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-2 mt-4">
+            <button class="h-9 rounded-lg glass text-xs text-fg-muted">+۱۰۰k</button>
+            <button class="h-9 rounded-lg glass text-xs text-fg-muted">+۵۰۰k</button>
+            <button class="h-9 rounded-lg glass text-xs text-fg-muted">+۱M</button>
+          </div>
+        </div>
+
+        <!-- Form -->
+        <div class="px-5 space-y-3 pb-24">
+          <div class="glass rounded-xl p-3">
+            <p class="text-[10px] text-fg-muted mb-1.5">پروژه</p>
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center"><i data-lucide="briefcase" class="w-4 h-4 text-purple-400"></i></div>
+              <div class="flex-1">
+                <p class="text-xs font-medium">اپلیکیشن فروش</p>
+                <p class="text-[10px] text-fg-muted">۷۲٪ مصرف شد</p>
+              </div>
+              <i data-lucide="chevron-down" class="w-4 h-4 text-fg-muted"></i>
+            </div>
+          </div>
+
+          <div class="glass rounded-xl p-3">
+            <p class="text-[10px] text-fg-muted mb-1.5">دسته‌بندی</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2.5 py-1 rounded-md bg-success text-white text-[10px] font-medium">دستمزد</span>
+              <span class="px-2.5 py-1 rounded-md glass text-fg-muted text-[10px]">پیش‌پرداخت</span>
+              <span class="px-2.5 py-1 rounded-md glass text-fg-muted text-[10px]">پورسانت</span>
+              <span class="px-2.5 py-1 rounded-md glass text-fg-muted text-[10px]">سایر</span>
+            </div>
+          </div>
+
+          <div class="glass rounded-xl p-3">
+            <p class="text-[10px] text-fg-muted mb-1.5">توضیحات</p>
+            <input type="text" placeholder="مثلاً: پرداخت مرحله دوم" class="w-full bg-transparent outline-none text-xs" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div class="glass rounded-xl p-3">
+              <p class="text-[10px] text-fg-muted mb-1.5">تاریخ</p>
+              <div class="flex items-center gap-2">
+                <i data-lucide="calendar" class="w-3.5 h-3.5 text-fg-muted"></i>
+                <span class="text-xs">۱۴ مهر ۱۴۰۴</span>
+              </div>
+            </div>
+            <div class="glass rounded-xl p-3">
+              <p class="text-[10px] text-fg-muted mb-1.5">ساعت</p>
+              <div class="flex items-center gap-2">
+                <i data-lucide="clock" class="w-3.5 h-3.5 text-fg-muted"></i>
+                <span class="text-xs tabular-nums">۱۴:۳۲</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass rounded-xl p-3">
+            <p class="text-[10px] text-fg-muted mb-2">پیوست</p>
+            <button class="w-full h-16 rounded-lg border border-dashed border-line-strong flex flex-col items-center justify-center gap-1">
+              <i data-lucide="upload" class="w-4 h-4 text-fg-muted"></i>
+              <span class="text-[10px] text-fg-muted">بارگذاری فاکتور یا فایل</span>
+            </button>
+          </div>
+
+          <button class="w-full h-12 rounded-xl bg-gradient-to-l from-brand to-brand-dark text-white text-sm font-bold shadow-lg shadow-brand/30 flex items-center justify-center gap-2" onclick="showToast('تراکنش با موفقیت ثبت شد', 'success'); switchScreen('dashboard')">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            ثبت تراکنش
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SCREEN: PROFILE ============ -->
+    <div data-screen="profile" class="phone-frame section-hidden">
+      <div class="phone-scroll h-full overflow-y-auto">
+        <div class="pt-2 pb-1 px-5 flex items-center justify-between text-[10px] font-medium tabular-nums">
+          <span>۹:۴۱</span>
+          <div class="flex items-center gap-1">
+            <i data-lucide="signal" class="w-3 h-3"></i>
+            <i data-lucide="wifi" class="w-3 h-3"></i>
+            <i data-lucide="battery-full" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+        <!-- Profile header -->
+        <div class="px-5 pt-6 pb-5 text-center">
+          <div class="relative inline-block mb-3">
+            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-brand to-cta flex items-center justify-center text-white font-bold text-2xl">م</div>
+            <button class="absolute bottom-0 left-0 w-7 h-7 rounded-full bg-brand flex items-center justify-center border-2 border-ink"><i data-lucide="camera" class="w-3.5 h-3.5 text-white"></i></button>
+          </div>
+          <h2 class="text-lg font-bold">مریم احمدی</h2>
+          <p class="text-xs text-fg-muted">maryam@example.com</p>
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cta/15 text-cta text-xs font-medium mt-2">
+            <i data-lucide="crown" class="w-3 h-3"></i>
+            حساب حرفه‌ای
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="px-5 grid grid-cols-3 gap-2 mb-5">
+          <div class="glass rounded-xl p-3 text-center">
+            <p class="text-lg font-bold tabular-nums">۶</p>
+            <p class="text-[10px] text-fg-muted">پروژه</p>
+          </div>
+          <div class="glass rounded-xl p-3 text-center">
+            <p class="text-lg font-bold tabular-nums">۴۱</p>
+            <p class="text-[10px] text-fg-muted">تراکنش</p>
+          </div>
+          <div class="glass rounded-xl p-3 text-center">
+            <p class="text-lg font-bold tabular-nums text-success">۱۲٪</p>
+            <p class="text-[10px] text-fg-muted">بازدهی</p>
+          </div>
+        </div>
+
+        <!-- Settings list -->
+        <div class="px-5 pb-24 space-y-2.5">
+          <p class="text-xs text-fg-muted mb-1 px-1">حساب کاربری</p>
+          <div class="glass rounded-xl divide-y divide-line">
+            <button class="w-full p-3 flex items-center gap-3 hover:bg-white/5 transition">
+              <div class="w-8 h-8 rounded-lg bg-brand/15 flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-brand"></i></div>
+              <span class="flex-1 text-right text-xs font-medium">اطلاعات شخصی</span>
+              <i data-lucide="chevron-left" class="w-4 h-4 text-fg-muted"></i>
+            </button>
+            <button class="w-full p-3 flex items-center gap-3 hover:bg-white/5 transition">
+              <div class="w-8 h-8 rounded-lg bg-purple-500/15 flex items-center justify-center"><i data-lucide="lock" class="w-4 h-4 text-purple-400"></i></div>
+              <span class="flex-1 text-right text-xs font-medium">امنیت و رمز عبور</span>
+              <i data-lucide="chevron-left" class="w-4 h-4 text-fg-muted"></i>
+            </button>
+            <button class="w-full p-3 flex items-center gap-3 hover:bg-white/5 transition">
+              <div class="w-8 h-8 rounded-lg bg-cta/15 flex items-center justify-center"><i data-lucide="bell" class="w-4 h-4 text-cta"></i></div>
+              <span class="flex-1 text-right text-xs font-medium">اعلان‌ها</span>
+              <i data-lucide="chevron-left" class="w-4 h-4 text-fg-muted"></i>
+            </button>
+          </div>
+
+          <p class="text-xs text-fg-muted mt-4 mb-1 px-1">تنظیمات</p>
+          <div class="glass rounded-xl divide-y divide-line">
+            <button class="w-full p-3 flex items-center gap-3 hover:bg-white/5 transition">
+              <div class="w-8 h-8 rounded-lg bg-cyan-500/15 flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-cyan-400"></i></div>
+              <span class="flex-1 text-right text-xs font-medium">زبان</span>
+              <span class="text-xs text-fg-muted">فارسی</span>
+            </button>
+            <button class="w-full p-3 flex items-center gap-3 hover:bg-white/5 transition">
+              <div class="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center"><i data-lucide="moon" class="w-4 h-4 text-emerald-400"></i></div>
+              <span class="flex-1 text-right text-xs font-medium">تم برنامه</span>
+              <span class="text-xs text-fg-muted">تیره</span>
+            </button>
+            <button class="w-full p-3 flex items-center gap-3 hover:bg-white/5 transition">
+              <div class="w-8 h-8 rounded-lg bg-pink-500/15 flex items-center justify-center"><i data-lucide="download" class="w-4 h-4 text-pink-400"></i></div>
+              <span class="flex-1 text-right text-xs font-medium">خروجی داده</span>
+              <i data-lucide="chevron-left" class="w-4 h-4 text-fg-muted"></i>
+            </button>
+          </div>
+
+          <button class="w-full p-3 rounded-xl bg-danger-soft hover:bg-danger/25 text-danger text-xs font-medium transition flex items-center justify-center gap-2 mt-4">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            خروج از حساب
+          </button>
+
+          <p class="text-center text-[10px] text-fg-subtle mt-4">نسخه ۱.۰.۰ · ۱۴۰۴</p>
+        </div>
+      </div>
+
+      <!-- Bottom nav -->
+      <div class="absolute bottom-0 left-0 right-0 bg-ink-soft/95 backdrop-blur-xl border-t border-line p-2 flex items-center justify-around">
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-fg-muted">
+          <i data-lucide="home" class="w-5 h-5"></i>
+          <span class="text-[9px]">خانه</span>
+        </button>
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-fg-muted">
+          <i data-lucide="briefcase" class="w-5 h-5"></i>
+          <span class="text-[9px]">پروژه‌ها</span>
+        </button>
+        <button class="-mt-6 w-12 h-12 rounded-full bg-gradient-to-br from-cta to-cta-dark flex items-center justify-center shadow-lg shadow-cta/40 border-4 border-ink" onclick="switchScreen('add')">
+          <i data-lucide="plus" class="w-5 h-5 text-white"></i>
+        </button>
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-fg-muted">
+          <i data-lucide="chart-pie" class="w-5 h-5"></i>
+          <span class="text-[9px]">گزارش</span>
+        </button>
+        <button class="flex flex-col items-center gap-0.5 px-3 py-1.5 text-brand">
+          <i data-lucide="user" class="w-5 h-5"></i>
+          <span class="text-[9px] font-medium">حساب</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- BOTTOM SHEET (demo) -->
+<!-- ============================================================ -->
+<div id="demo-sheet" class="bottom-sheet">
+  <div class="bottom-sheet-backdrop" onclick="closeBottomSheet('demo-sheet')"></div>
+  <div class="bottom-sheet-panel">
+    <div class="pt-3 pb-2 flex justify-center">
+      <div class="w-10 h-1 rounded-full bg-white/20"></div>
+    </div>
+    <div class="px-5 pb-8">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-base font-bold">فیلترهای پیشرفته</h3>
+        <button class="w-8 h-8 rounded-lg glass flex items-center justify-center" onclick="closeBottomSheet('demo-sheet')">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="text-xs text-fg-muted mb-2 block">بازه زمانی</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button class="h-10 rounded-xl glass text-xs text-fg-muted">امروز</button>
+            <button class="h-10 rounded-xl bg-brand text-white text-xs font-medium">۷ روز اخیر</button>
+            <button class="h-10 rounded-xl glass text-xs text-fg-muted">این ماه</button>
+            <button class="h-10 rounded-xl glass text-xs text-fg-muted">سال جاری</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs text-fg-muted mb-2 block">نوع تراکنش</label>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1.5 rounded-full bg-success text-white text-xs font-medium">درآمد</span>
+            <span class="px-3 py-1.5 rounded-full glass text-fg-muted text-xs">هزینه</span>
+            <span class="px-3 py-1.5 rounded-full glass text-fg-muted text-xs">انتقال</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs text-fg-muted mb-2 block">محدوده مبلغ (تومان)</label>
+          <div class="flex items-center gap-2">
+            <input type="text" placeholder="از" class="flex-1 h-10 px-3 rounded-xl bg-ink-soft border border-line outline-none text-xs tabular-nums" value="۱٬۰۰۰٬۰۰۰" />
+            <span class="text-fg-muted">—</span>
+            <input type="text" placeholder="تا" class="flex-1 h-10 px-3 rounded-xl bg-ink-soft border border-line outline-none text-xs tabular-nums" value="۱۰٬۰۰۰٬۰۰۰" />
+          </div>
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button class="flex-1 h-11 rounded-xl glass text-sm font-medium" onclick="closeBottomSheet('demo-sheet')">انصراف</button>
+          <button class="flex-1 h-11 rounded-xl bg-brand text-white text-sm font-medium" onclick="closeBottomSheet('demo-sheet'); showToast('فیلترها اعمال شد', 'success')">اعمال فیلتر</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TOAST CONTAINER -->
+<!-- ============================================================ -->
+<div id="toast-container" class="toast-container"></div>
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="max-w-7xl mx-auto px-4 sm:px-6 py-10 mt-6 border-t border-line">
+  <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-cta flex items-center justify-center">
+        <i data-lucide="wallet" class="w-4 h-4 text-white"></i>
+      </div>
+      <div>
+        <p class="text-sm font-bold">کیت رابط کاربری مدیریت مالی پروژه‌ها</p>
+        <p class="text-[11px] text-fg-muted">ساخته‌شده با HTML5، Tailwind v4، Vazirmatn و Lucide</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3 text-xs text-fg-muted">
+      <span>نسخه ۱.۰</span>
+      <span>·</span>
+      <span>۱۴۰۴</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================ -->
+<!-- JAVASCRIPT -->
+<!-- ============================================================ -->
+<script>
+  // Initialize Lucide icons
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.lucide) lucide.createIcons();
+  });
+
+  // Scroll to a section
+  function scrollToSection(id) {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Screen tab switching
+  function switchScreen(name) {
+    document.querySelectorAll('[data-screen]').forEach(el => {
+      el.classList.toggle('section-hidden', el.dataset.screen !== name);
+    });
+    document.querySelectorAll('[data-screen-btn]').forEach(btn => {
+      const isActive = btn.dataset.screenBtn === name;
+      btn.classList.toggle('tab-active', isActive);
+      btn.classList.toggle('glass', !isActive);
+      btn.classList.toggle('text-fg-muted', !isActive);
+    });
+    // Re-init icons for newly visible content
+    if (window.lucide) lucide.createIcons();
+    // Scroll into view
+    document.getElementById('screens')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Bottom sheet
+  function openBottomSheet(id) {
+    const sheet = document.getElementById(id);
+    if (!sheet) return;
+    sheet.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    if (window.lucide) lucide.createIcons();
+  }
+  function closeBottomSheet(id) {
+    const sheet = document.getElementById(id);
+    if (!sheet) return;
+    sheet.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  // Close on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.bottom-sheet.open').forEach(s => s.classList.remove('open'));
+      document.body.style.overflow = '';
+    }
+  });
+
+  // Toast
+  const toastConfig = {
+    success: { bg: 'bg-success-soft', text: 'text-success', icon: 'check-circle', border: 'border-success/30' },
+    error:   { bg: 'bg-danger-soft',  text: 'text-danger',  icon: 'x-circle',       border: 'border-danger/30' },
+    info:    { bg: 'bg-info-soft',    text: 'text-purple-300', icon: 'info',         border: 'border-info/30' },
+    warning: { bg: 'bg-warning-soft', text: 'text-warning', icon: 'alert-triangle', border: 'border-warning/30' }
+  };
+  function showToast(message, type = 'info', duration = 3000) {
+    const cfg = toastConfig[type] || toastConfig.info;
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.className = `toast glass-strong ${cfg.border} border ${cfg.text} px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2.5 text-sm font-medium`;
+    toast.innerHTML = `<i data-lucide="${cfg.icon}" class="w-4 h-4 shrink-0"></i><span>${message}</span>`;
+    container.appendChild(toast);
+    if (window.lucide) lucide.createIcons();
+    setTimeout(() => {
+      toast.classList.add('leaving');
+      setTimeout(() => toast.remove(), 200);
+    }, duration);
+  }
+
+  // Number formatting helper (Persian digits + thousand separators)
+  function toPersianDigits(num) {
+    const persian = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+    return String(num).replace(/\d/g, d => persian[d]);
+  }
+  function formatToman(num) {
+    return toPersianDigits(num.toLocaleString('en-US'));
+  }
+
+  // Animated counters for hero stats (optional, simple)
+  document.addEventListener('DOMContentLoaded', () => {
+    // Add subtle entrance animation to phone frames
+    const phones = document.querySelectorAll('.phone-frame');
+    phones.forEach((p, i) => {
+      p.style.opacity = '0';
+      p.style.transform = 'translateY(20px) scale(0.98)';
+      p.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+      setTimeout(() => {
+        p.style.opacity = '1';
+        p.style.transform = 'translateY(0) scale(1)';
+      }, 80 + i * 60);
+    });
+  });
+
+  // Close bottom sheet when clicking outside panel
+  document.querySelectorAll('.bottom-sheet').forEach(sheet => {
+    sheet.addEventListener('click', (e) => {
+      if (e.target === sheet || e.target.classList.contains('bottom-sheet-backdrop')) {
+        sheet.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
